@@ -234,7 +234,7 @@
                 android:gravity="end"></TextView>
 
             <Button
-                android:id="@+id/btnRoundShape"
+                android:id="@+id/btnLogin"
                 android:layout_width="200dp"
                 android:layout_marginTop="20dp"
                 android:layout_gravity="center_horizontal"

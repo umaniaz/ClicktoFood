@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#3A3939"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.NavFragment">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/imgCat"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/person_placeholder"
+        android:layout_width="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="120dp"
+        app:civ_border_width="0.5dp"
+        app:civ_border_color="#FF000000"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit Profile"
+        android:textColor="#ffffff"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"></TextView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="Duty Started"
+                    android:textSize="17dp"
+                    android:textColor="#ffffff"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+                <Switch
+                    android:id="@+id/on_off_switch"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="OFF"
+                    android:textOn="ON"/>
+
+            </RelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:background="#ffffff"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+            </View>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:text="All Tasks"
+                android:layout_marginTop="20dp"
+                android:textSize="17dp"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+            </TextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#ffffff"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+            </View>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:text="Chat with us"
+                android:layout_marginTop="20dp"
+                android:textSize="17dp"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+            </TextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#ffffff"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+            </View>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:text="Settings"
+                android:layout_marginTop="20dp"
+                android:textSize="17dp"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+            </TextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#ffffff"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp">
+            </View>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>
