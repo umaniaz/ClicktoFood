@@ -1,5 +1,6 @@
 package com.food.clicktofood;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -39,24 +41,45 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     }
 
 
+//    @Override
+//    public void onMessageReceived(RemoteMessage remoteMessage) {
+//        Log.e(TAG,"data received = "+remoteMessage.getData().toString());
+//
+//        if(!remoteMessage.getData().toString().contains("{custom=")){
+//            if(remoteMessage.getData().size() > 0){
+//                showNotification(remoteMessage.getData().get("title"),
+//                        remoteMessage.getData().get("body"),
+//                        remoteMessage.getData().get("icon"),
+//                        remoteMessage.getData().get("image"),
+//                        remoteMessage.getData().get("customlink"));
+//
+//            }
+//        }
+////        Log.d(TAG,"noti received body "+remoteMessage.getNotification().getBody().toString()+
+////        " title "+remoteMessage.getNotification().getTitle().toString()+
+////        " icon "+remoteMessage.getNotification().getIcon().toString());
+//        String cLink= "";
+//    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.e(TAG,"data received = "+remoteMessage.getData().toString());
+        super.onMessageReceived(remoteMessage);
+        Log.d(TAG, "onMessageReceived: " + remoteMessage);
 
-        if(!remoteMessage.getData().toString().contains("{custom=")){
-            if(remoteMessage.getData().size() > 0){
-                showNotification(remoteMessage.getData().get("title"),
-                        remoteMessage.getData().get("body"),
-                        remoteMessage.getData().get("icon"),
-                        remoteMessage.getData().get("image"),
-                        remoteMessage.getData().get("customlink"));
-
-            }
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        String channelId = "Default";
+        NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(remoteMessage.getNotification().getTitle())
+                .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent);;
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_DEFAULT);
+            manager.createNotificationChannel(channel);
         }
-//        Log.d(TAG,"noti received body "+remoteMessage.getNotification().getBody().toString()+
-//        " title "+remoteMessage.getNotification().getTitle().toString()+
-//        " icon "+remoteMessage.getNotification().getIcon().toString());
-        String cLink= "";
+        manager.notify(0, builder.build());
     }
 
     private void showNotification(String title,String description,
