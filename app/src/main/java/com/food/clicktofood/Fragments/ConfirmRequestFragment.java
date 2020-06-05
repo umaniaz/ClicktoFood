@@ -102,7 +102,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // serviceStart.clickService("Start");
+                serviceStart.clickService("Start");
 
                 if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
                     getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

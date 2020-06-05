@@ -1,11 +1,16 @@
 package com.food.clicktofood;//package bd.ctgshop.com.ctgshop;
 //
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,6 +20,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.food.clicktofood.Adapter.LocationTrackerEnabled;
+import com.food.clicktofood.Adapter.ServiceStart;
+import com.food.clicktofood.Model.LoginResponse;
+import com.food.clicktofood.Retrofit.APIInterface;
+import com.food.clicktofood.Retrofit.ApiUtils;
+import com.food.clicktofood.SessionData.SessionData;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,6 +37,7 @@ import java.util.function.Consumer;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.Timed;
@@ -38,6 +52,12 @@ public class MyService extends Service {
     private boolean started = false;
     private Handler handler = new Handler();
     Runnable runnable;
+    ProgressDialog dialog;
+    private CompositeDisposable mCompositeDisposable;
+    ProgressDialog loadingDialog;
+    APIInterface apiInterface;
+    SessionData sessionData;
+    private LocationTrackerEnabled locationTrackerEnabled;
     @Override
     public void onCreate() {
         if (Build.VERSION.SDK_INT >= 26) {
@@ -52,9 +72,13 @@ public class MyService extends Service {
                     .setContentTitle("")
                     .setContentText("").build();
             startForeground(1, notification);
-
+            //locationTrackerEnabled = (LocationTrackerEnabled) MyService.this;
         }
-       // Toast.makeText(getApplicationContext(), "Oncreate", Toast.LENGTH_LONG).show();
+        sessionData = new SessionData(getApplicationContext());
+        mCompositeDisposable = new CompositeDisposable();
+        apiInterface = ApiUtils.getService();
+
+        // Toast.makeText(getApplicationContext(), "Oncreate", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -69,7 +93,9 @@ public class MyService extends Service {
           runnable = new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Called", Toast.LENGTH_LONG).show();
+                //postLogin();
+                sendMessage();
+                //Toast.makeText(getApplicationContext(), "Called", Toast.LENGTH_LONG).show();
                 if(started) {
                     start();
                 }
@@ -91,6 +117,52 @@ public class MyService extends Service {
 
     }
 
+    public void postLogin(){
+
+        if(isNetworkAvailable()){
+            //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
+            mCompositeDisposable.add(apiInterface.postLogin(sessionData.getUserDataModel().getData().getMember().get(0).getEmail(),sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo(),"88991",sessionData.getUserDataModel().getData().getMember().get(0).getFirebaseToken()) //
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponsePromo, this::handleErrorPromo));
+        }else{
+            Toast.makeText(getApplicationContext(), "Please check your internet connection and try again", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    private void handleResponsePromo(LoginResponse clientResponse) {
+        //dialog.dismiss();
+        if(clientResponse.getIsSuccess()){
+            sessionData.setUserDataModel(clientResponse);
+            Log.d("Azad", "Login response success "+clientResponse.getData().getMember().get(0).getFullName());
+            //startActivity(new Intent(getApplicationContext(), AfterLoginActivity.class));
+
+        }else{
+            Toast.makeText(getApplicationContext(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void handleErrorPromo(Throwable error) {
+        //dialog.dismiss();
+        Toast.makeText(getApplicationContext(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isNetworkAvailable(){
+
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE); // from arman
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else return false;
+    }
+
     public void stop() {
         Toast.makeText(getApplicationContext(), "Stopped", Toast.LENGTH_LONG).show();
         started = false;
@@ -105,6 +177,11 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         stop();
+        Intent intent = new Intent("my-event-location-track");
+        // add data
+        intent.putExtra("locationTrack", "off");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
         Toast.makeText(getApplicationContext(), "OnDestroy", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
@@ -113,5 +190,16 @@ public class MyService extends Service {
     public IBinder onBind(Intent intent) {
         Toast.makeText(getApplicationContext(), "onBind", Toast.LENGTH_LONG).show();
         return null;
+    }
+
+    public void setCallbacks(LocationTrackerEnabled callbacks) {
+        locationTrackerEnabled = callbacks;
+    }
+
+    private void sendMessage() {
+        Intent intent = new Intent("my-event-location-track");
+        // add data
+        intent.putExtra("locationTrack", "location");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
