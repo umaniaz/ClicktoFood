@@ -2,15 +2,12 @@ package com.food.clicktofood.Fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,26 +15,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.food.clicktofood.Adapter.ServiceStart;
-import com.food.clicktofood.AfterLoginActivity;
-import com.food.clicktofood.MyService;
 import com.food.clicktofood.R;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ConfirmRequestFragment#newInstance} factory method to
+ * Use the {@link ConfirmDeliveryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallback {
+public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallback {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,12 +46,14 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
     View myview;
     Button accept, reject;
     ServiceStart serviceStart;
-    public static ConfirmRequestFragment newInstance() {
-        ConfirmRequestFragment fragment = new ConfirmRequestFragment();
+
+
+    public static ConfirmDeliveryFragment newInstance() {
+        ConfirmDeliveryFragment fragment = new ConfirmDeliveryFragment();
         return fragment;
     }
 
-    public ConfirmRequestFragment() {
+    public ConfirmDeliveryFragment() {
         // Required empty public constructor
     }
 
@@ -68,11 +63,11 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ConfirmRequestFragment.
+     * @return A new instance of fragment ConfirmDeliveryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ConfirmRequestFragment newInstance(String param1, String param2) {
-        ConfirmRequestFragment fragment = new ConfirmRequestFragment();
+    public static ConfirmDeliveryFragment newInstance(String param1, String param2) {
+        ConfirmDeliveryFragment fragment = new ConfirmDeliveryFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -93,7 +88,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        myview = inflater.inflate(R.layout.fragment_confirm_request, container, false);
+        myview = inflater.inflate(R.layout.fragment_confirm_delivery, container, false);
         mapView = (MapView) myview.findViewById(R.id.mapview);
 
         serviceStart = (ServiceStart) getActivity();
@@ -102,21 +97,11 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // serviceStart.clickService("Start");
-
-                if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(), "ConfirmOrderFragment")
-                            .commit();
-                } else {
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                }
-
+                //serviceStart.clickService("Start");
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment").addToBackStack("JobListFragment")
+                        .commit();
             }
         });
 
@@ -124,7 +109,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                serviceStart.clickService("Stop");
+               // serviceStart.clickService("Stop");
             }
         });
         mapView.onCreate(savedInstanceState);
@@ -214,4 +199,5 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
 }

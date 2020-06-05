@@ -5,17 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.food.clicktofood.Adapter.ServiceStart;
 import com.food.clicktofood.Fragments.ConfirmRequestFragment;
 import com.food.clicktofood.Fragments.JobListFragment;
 import com.food.clicktofood.Fragments.MyProfileFragment;
@@ -23,13 +30,14 @@ import com.food.clicktofood.Fragments.NavFragment;
 import com.food.clicktofood.Fragments.NavigationClickListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-public class AfterLoginActivity extends AppCompatActivity implements NavigationClickListener{
+public class AfterLoginActivity extends AppCompatActivity implements NavigationClickListener, ServiceStart {
     private final String TAG = "ctf_"+this.getClass().getSimpleName();
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private Toolbar toolbar;
     static AfterLoginActivity activityA;
     RelativeLayout menu;
+    ImageView logo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,20 +65,40 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
             }
         });
 
+        logo = (ImageView) findViewById(R.id.imgLogo);
+        logo.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("WrongConstant")
+            @Override
+            public void onClick(View view) {
+                if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                } else {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                }
+            }
+        });
+
         Log.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
 
-//        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
-//            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-//                    .commit();
-//        } else {
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-//                    .commit();
-//        }
+        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                    .commit();
+        }
 
         if(getSupportFragmentManager().findFragmentByTag("NavFragment")!=null){
             getSupportFragmentManager().popBackStack("NavFragment", 0);
@@ -81,18 +109,22 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                     .commit();
         }
 
-        if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
-                    .commit();
-        } else {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
-                    .commit();
-        }
+//        if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
+//            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+//                    .commit();
+//        } else {
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+//                    .commit();
+//        }
+    }
+
+    public static void callService(){
+
     }
 
     public static AfterLoginActivity getInstance(){
@@ -127,5 +159,24 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                 super.onDrawerClosed(drawerView);
             }
         };
+    }
+
+    @Override
+    public void clickService(String mood) {
+        if(mood.equals("Start")){
+            //startService(new Intent(this, MyService.class));
+
+            Intent service = new Intent(this, MyService.class);
+            this.startService(service);
+            startService(new Intent(this, MyService.class));
+
+//            Intent startIntent = new Intent(this, MyService.class);
+//            startService(startIntent);
+//            bindService(startIntent, mService, Context.BIND_AUTO_CREATE);
+        }else{
+            stopService(new Intent(this, MyService.class));
+        }
+    }
+    public void stopService(){
     }
 }

@@ -13,6 +13,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -33,7 +34,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     private NotificationCompat.Builder mBuilder;
     private String mTitle,mDescription;
-
+    LocalBroadcastManager broadcaster;
+    public static String TestContent = "Sohan";
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
@@ -80,6 +82,16 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             manager.createNotificationChannel(channel);
         }
         manager.notify(0, builder.build());
+
+//        broadcaster = LocalBroadcastManager.getInstance(getBaseContext());
+//        Intent newintent = new Intent(TestContent);
+//        newintent.putExtra("Key", "Arrived");
+//        broadcaster.sendBroadcast(intent);
+
+        Intent newintent = new Intent("custom-event-name");
+        newintent.putExtra("message", "This is my message!");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(newintent);
+
     }
 
     private void showNotification(String title,String description,

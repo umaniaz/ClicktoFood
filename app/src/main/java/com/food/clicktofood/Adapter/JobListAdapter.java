@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.food.clicktofood.Fragments.MyProfileFragment;
 import com.food.clicktofood.R;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
@@ -31,6 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHolder> {
     Context context;
     List<String> jobslist;
+    JobClicked jobClicked;
     //categoryProductClick categoryProductClick;
     private final String TAG = "berich_"+this.getClass().getSimpleName();
     SimpleDateFormat dateFormat;
@@ -40,13 +43,16 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
         ImageView imgCat;
         Context context;
         CardView cardView; TextView btnColor;
+        Button btnLogin;
         public ViewHolder(View view) {
             super(view);
+            btnLogin = (Button)view.findViewById(R.id.btnLogin);
         }
     }
-    public JobListAdapter(Context context, List<String> colors ) {  //categoryProductClick categoryProductClick
+    public JobListAdapter(Context context, List<String> colors, JobClicked jobClicked ) {  //categoryProductClick categoryProductClick
         jobslist = colors;
         this.context = context;
+        this.jobClicked = jobClicked;
     }
 
     @Override
@@ -68,6 +74,11 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(JobListAdapter.ViewHolder holder, final int position) {
-            
+            holder.btnLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    jobClicked.jobClicked("test");
+                }
+            });
     }
 }

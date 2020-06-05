@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#023944"
+    android:orientation="vertical"
+    android:clickable="true"
+    tools:context=".Fragments.ConfirmOrderFragment">
+
+    <TextView
+        android:id="@+id/tvTop"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FOOD DELIVERY"
+        android:textColor="#ffffff"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"></TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/border"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick-up Location"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"></TextView>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:textSize="16dp"
+            android:text="Mc Donalds - Abu dhabi mall"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_height="match_parent"
+            android:inputType="text"
+            android:background="#fff"
+            />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:background="#000000"></View>
+
+        <!--        <fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--            xmlns:tools="http://schemas.android.com/tools"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="600dp"-->
+        <!--            android:id="@+id/map"-->
+        <!--            android:layout_marginTop="10dp"-->
+        <!--            android:layout_marginLeft="20dp"-->
+        <!--            android:layout_marginStart="20dp"-->
+        <!--            android:layout_marginEnd="20dp"-->
+        <!--            android:layout_marginRight="20dp"-->
+        <!--            tools:context=".MainActivity"-->
+        <!--            android:name="com.google.android.gms.maps.SupportMapFragment" />-->
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="250dp" />
+
+        <TextView
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Mode"
+            android:textStyle="bold"
+            android:textSize="17dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"></TextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="7dp"
+                android:src="@drawable/camera"></ImageView>
+
+            <TextView
+                android:id="@+id/tvPaymentType"
+                android:textSize="16dp"
+                android:text="Cash"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_height="match_parent"
+                android:inputType="text"
+                android:background="#fff" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:background="#000000"></View>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:text="Total"
+                android:textSize="17dp"
+                android:id="@+id/tvTotalTitle"
+                android:layout_toLeftOf="@+id/tvTotalValue"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="AED 66.00"
+                android:textSize="17dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/tvTotalValue"
+                android:layout_height="wrap_content">
+            </TextView>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnAccept"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/btn_accept"
+                android:textColor="#ffffff"
+                android:text="CONFIRM PICKUP" />
+
+            <Button
+                android:id="@+id/btnReject"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/btn_reject"
+                android:textColor="#ffffff"
+                android:text="REJECT" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

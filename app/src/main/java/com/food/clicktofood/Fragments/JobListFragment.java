@@ -1,17 +1,26 @@
 package com.food.clicktofood.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.food.clicktofood.Adapter.JobClicked;
 import com.food.clicktofood.Adapter.JobListAdapter;
+import com.food.clicktofood.FirebaseMessagingService;
 import com.food.clicktofood.R;
+import com.food.clicktofood.SessionData.SessionData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +39,13 @@ public class JobListFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    BroadcastReceiver receiver;
     View myview;
     JobListAdapter jobListAdapter;
     RecyclerView recyclerView;
     List<String> jobList;
     LinearLayoutManager layoutManager;
-
+    SessionData sessionData;
     public static JobListFragment newInstance() {
         JobListFragment fragment = new JobListFragment();
         return fragment;
@@ -79,9 +88,18 @@ public class JobListFragment extends Fragment {
         // Inflate the layout for this fragment
         myview = inflater.inflate(R.layout.fragment_job_list, container, false);
 
+        sessionData = new SessionData(getActivity());
         jobList = new ArrayList<>();
         recyclerView = myview.findViewById(R.id.rvJobList);
-        jobListAdapter = new JobListAdapter(getActivity(), jobList);
+        jobListAdapter = new JobListAdapter(getActivity(), jobList, new JobClicked() {
+            @Override
+            public void jobClicked(String id) {
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment").addToBackStack("ConfirmRequestFragment")
+                        .commit();
+            }
+        });
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -89,6 +107,60 @@ public class JobListFragment extends Fragment {
         recyclerView.hasFixedSize();
         recyclerView.setAdapter(jobListAdapter);
 
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                try {
+                    String value= intent.getStringExtra("key");
+                    Toast.makeText(getActivity(), value, Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Exception "+e, Toast.LENGTH_LONG).show();
+                }
+
+            }
+        };
+
         return myview;
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(sessionData.getAppState()) {
+                String message = intent.getStringExtra("message");
+                Toast.makeText(getActivity(), "Job fragment", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(getActivity(), "Other fragment", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Toast.makeText(getActivity(), "onStart joblist ", Toast.LENGTH_LONG).show();
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+                        new IntentFilter("custom-event-name"));
+        sessionData.setAppState(true);
+    }
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Toast.makeText(getActivity(), "onStop joblist ", Toast.LENGTH_LONG).show();
+        //LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
+        sessionData.setAppState(false);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(getActivity(), "onDestroy joblist ", Toast.LENGTH_LONG).show();
     }
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#fafafa"
     android:clickable="true"
     tools:context=".Fragments.JobListFragment">
@@ -37,20 +38,32 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"
+        android:orientation="vertical"
         android:layout_below="@+id/dateHolder"
-        android:background="@drawable/border"
-        android:orientation="vertical">
+        android:background="@drawable/border">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_margin="10dp"
         android:id="@+id/rvJobList"
+        android:layout_above="@+id/btnReload"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
     </androidx.recyclerview.widget.RecyclerView>
 
-    </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reload"
+            android:background="#4DA6ED"
+            android:textColor="#ffffff"
+            android:textSize="19dp"
+            android:id="@+id/btnReload"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"></Button>
+    </RelativeLayout>
+
 </RelativeLayout>
