@@ -11,7 +11,9 @@ package com.food.clicktofood.Retrofit;
 //import com.myapps.x.models.*;
 
 import com.food.clicktofood.Model.DutyStatus;
+import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.LoginResponse;
+import com.food.clicktofood.Model.StatusPostingResponse;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
@@ -34,6 +36,15 @@ public interface APIInterface {
     @GET("GetDutyStatus") //LOGIN
     Observable<DutyStatus>getDutyStatus(@Query("agentID") String agentID,
                                     @Query("firebaseToken") String firebaseToken);
+
+    @GET("GetTaskList") //LOGIN
+    Observable<JobListResponse>getJobList(@Query("agentID") String agentID);
+
+    @GET("TaskAcceptOrReject") //LOGIN
+    Observable<StatusPostingResponse>postStatus(@Query("agentID") String agentID,
+                                                   @Query("taskid") String firtaskidebaseToken,
+                                                   @Query("status") Integer status);
+
 
 //    @Multipart
 //    @POST("ncsapi.ashx?cmnd=_REQUISITIONV2_")

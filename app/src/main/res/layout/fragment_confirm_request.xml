@@ -43,7 +43,7 @@
             android:layout_marginStart="20dp"></TextView>
 
         <TextView
-            android:id="@+id/tvName"
+            android:id="@+id/tvPickup"
             android:textSize="16dp"
             android:text="Mc Donalds - Abu dhabi mall"
             android:layout_width="match_parent"

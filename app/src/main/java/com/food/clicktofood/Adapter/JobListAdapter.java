@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.food.clicktofood.Fragments.MyProfileFragment;
+import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.R;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
@@ -32,13 +33,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHolder> {
     Context context;
-    List<String> jobslist;
+    List<JobListResponse.Member> jobslist;
     JobClicked jobClicked;
     //categoryProductClick categoryProductClick;
     private final String TAG = "berich_"+this.getClass().getSimpleName();
     SimpleDateFormat dateFormat;
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView ScriptName;   TextView ScriptDate;
+        TextView title, pickUp, drop;
         RelativeLayout fullView;
         ImageView imgCat;
         Context context;
@@ -47,9 +48,12 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
         public ViewHolder(View view) {
             super(view);
             btnLogin = (Button)view.findViewById(R.id.btnLogin);
+            title = (TextView) view.findViewById(R.id.tvTitle);
+            pickUp = (TextView) view.findViewById(R.id.tvPickUp);
+            drop = (TextView) view.findViewById(R.id.tvDrop);
         }
     }
-    public JobListAdapter(Context context, List<String> colors, JobClicked jobClicked ) {  //categoryProductClick categoryProductClick
+    public JobListAdapter(Context context, List<JobListResponse.Member> colors, JobClicked jobClicked ) {  //categoryProductClick categoryProductClick
         jobslist = colors;
         this.context = context;
         this.jobClicked = jobClicked;
@@ -58,8 +62,8 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
     @Override
     public int getItemCount() {
 
-        //return jobslist.size();
-        return 3;
+        return jobslist.size();
+        //return 3;
     }
 
     @Override
@@ -77,8 +81,12 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.ViewHold
             holder.btnLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    jobClicked.jobClicked("test");
+                    jobClicked.jobClicked(position);
                 }
             });
+            holder.pickUp.setText(jobslist.get(position).getPickupLocation());
+            holder.title.setText(jobslist.get(position).getCategoryname());
+            holder.drop.setText(jobslist.get(position).getCustomerAddress());
+            holder.pickUp.setText(jobslist.get(position).getPickupLocation());
     }
 }

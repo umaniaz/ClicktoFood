@@ -1,21 +1,33 @@
 package com.food.clicktofood.Fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.food.clicktofood.Adapter.ServiceStart;
+import com.food.clicktofood.Model.JobListResponse;
+import com.food.clicktofood.Model.StatusPostingResponse;
 import com.food.clicktofood.R;
+import com.food.clicktofood.Retrofit.APIInterface;
+import com.food.clicktofood.Retrofit.ApiUtils;
+import com.food.clicktofood.SessionData.SessionData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -24,6 +36,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +62,13 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
     View myview;
     Button accept, reject;
     ServiceStart serviceStart;
+    ProgressDialog dialog;
+    private CompositeDisposable mCompositeDisposable;
+    APIInterface apiInterface;
+    SessionData sessionData;
+    static JobListResponse.Member jobResponse;
+    static Gson gson;
+    TextView pickup, cashMode, amount;
 
     public static ConfirmOrderFragment newInstance() {
         ConfirmOrderFragment fragment = new ConfirmOrderFragment();
@@ -60,15 +84,13 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ConfirmOrderFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ConfirmOrderFragment newInstance(String param1, String param2) {
+    public static ConfirmOrderFragment newInstance(String param1) {
         ConfirmOrderFragment fragment = new ConfirmOrderFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -91,6 +113,19 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
 
         serviceStart = (ServiceStart) getActivity();
 
+        sessionData = new SessionData(getActivity());
+        mCompositeDisposable = new CompositeDisposable();
+        apiInterface = ApiUtils.getService();
+        gson = new Gson();
+        jobResponse = gson.fromJson(mParam1, JobListResponse.Member.class);
+
+        pickup = (TextView)myview.findViewById(R.id.tvPickup);
+        pickup.setText(jobResponse.getPickupLocation());
+        cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
+        cashMode.setText(jobResponse.getPaymentMode());
+        amount = (TextView)myview.findViewById(R.id.tvTotalValue);
+        amount.setText(String.format("%,.2f", jobResponse.getTotalAmount()));
+
         accept = (Button)myview.findViewById(R.id.btnAccept);
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +135,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
                         .beginTransaction()
                         .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
                         .commit();
+                sentStatus("2");
             }
         });
 
@@ -114,6 +150,74 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         checkPermission();
         return myview;
     }
+
+
+    public void sentStatus(String status){
+        dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
+        if(isNetworkAvailable()){
+            //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
+            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getTaskID(), 2) //
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponsePromo, this::handleErrorPromo));
+        }else{
+            Toast.makeText(getActivity(), "Please check your internet connection and try again", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    private void handleResponsePromo(StatusPostingResponse clientResponse) {
+        dialog.dismiss();
+        if(clientResponse.getIsSuccess()){
+
+           // if (getFragmentManager().findFragmentByTag("JobListFragment") != null || getFragmentManager().findFragmentByTag("ConfirmOrderFragment") != null) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
+                        .commit();
+//            } else {
+//                getFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
+//                        .commit();
+//            }
+
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
+        }
+
+    }
+
+    private void handleErrorPromo(Throwable error) {
+        dialog.dismiss();
+        Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isNetworkAvailable(){
+
+        ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE); // from arman
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else return false;
+    }
+
 
     private void checkPermission(){
         if ( ContextCompat.checkSelfPermission( getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION )

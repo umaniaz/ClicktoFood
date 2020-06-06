@@ -42,6 +42,7 @@ import com.food.clicktofood.Fragments.JobListFragment;
 import com.food.clicktofood.Fragments.MyProfileFragment;
 import com.food.clicktofood.Fragments.NavFragment;
 import com.food.clicktofood.Fragments.NavigationClickListener;
+import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.LoginResponse;
 import com.food.clicktofood.Retrofit.APIInterface;
 import com.food.clicktofood.Retrofit.ApiUtils;
@@ -59,6 +60,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AfterLoginActivity extends AppCompatActivity implements NavigationClickListener, ServiceStart {
     private final String TAG = "ctf_"+this.getClass().getSimpleName();
@@ -106,6 +110,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
 
         sessionData = new SessionData(getApplicationContext());
         mCompositeDisposable = new CompositeDisposable();
+
         apiInterface = ApiUtils.getService();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -131,18 +136,18 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
 
         Log.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
 
-        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                    .commit();
-        } else {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                    .commit();
-        }
+//        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
+//            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+//                    .commit();
+//        } else {
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+//                    .commit();
+//        }
 
         if(getSupportFragmentManager().findFragmentByTag("NavFragment")!=null){
             getSupportFragmentManager().popBackStack("NavFragment", 0);
@@ -153,18 +158,18 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                     .commit();
         }
 
-//        if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
-//            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
-//                    .commit();
-//        } else {
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
-//                    .commit();
-//        }
+        if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+                    .commit();
+        }
     }
 
     public void postLogin(){

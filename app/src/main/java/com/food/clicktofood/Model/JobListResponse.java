@@ -125,6 +125,13 @@ public class JobListResponse {
         @SerializedName("PaymentMode")
         @Expose
         private String paymentMode;
+        @SerializedName("AgentID")
+        @Expose
+        private String AgentID;
+        @SerializedName("Categoryname")
+        @Expose
+        private String Categoryname;
+
 
         public String getTaskID() {
             return taskID;
@@ -238,6 +245,22 @@ public class JobListResponse {
             this.paymentMode = paymentMode;
         }
 
+        public String getAgentID() {
+            return AgentID;
+        }
+
+        public void setAgentID(String agentID) {
+            AgentID = agentID;
+        }
+
+        public String getCategoryname() {
+            return Categoryname;
+        }
+
+        public void setCategoryname(String categoryname) {
+            Categoryname = categoryname;
+        }
+
         @Override
         public String toString() {
             return "Member{" +
@@ -255,6 +278,8 @@ public class JobListResponse {
                     ", customerDescription='" + customerDescription + '\'' +
                     ", totalAmount=" + totalAmount +
                     ", paymentMode='" + paymentMode + '\'' +
+                    ", AgentID='" + AgentID + '\'' +
+                    ", Categoryname='" + Categoryname + '\'' +
                     '}';
         }
     }

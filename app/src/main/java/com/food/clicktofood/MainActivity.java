@@ -11,10 +11,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     TextView forgotPassword;
     String newToken;
     SessionData sessionData;
+    ImageView passViewHide;
 
 //    Name: Click Food
 //    Email:ondemandclick2food@gmail.com
@@ -67,6 +71,25 @@ public class MainActivity extends AppCompatActivity {
             email = (EditText) findViewById(R.id.etEmail);
             password = (EditText) findViewById(R.id.etPassword);
             forgotPassword = (TextView) findViewById(R.id.tvForgotPassword);
+            passViewHide = (ImageView) findViewById(R.id.imgPassword);
+            passViewHide.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
+                        passViewHide.setImageResource(R.drawable.eye_latest_open);
+
+                        //Show Password
+                        password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    }
+                    else{
+                        passViewHide.setImageResource(R.drawable.eye_logo);
+
+                        //Hide Password
+                        password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+                    }
+                }
+            });
 
 
             FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
