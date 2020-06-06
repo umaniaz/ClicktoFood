@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -165,9 +166,10 @@ public class JobListFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if(sessionData.getAppState()) {
                 String message = intent.getStringExtra("message");
-                Toast.makeText(getActivity(), "Job fragment", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Task list reloaded", Toast.LENGTH_LONG).show();
+                getJobList();
             }else{
-                Toast.makeText(getActivity(), "Other fragment", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "New task available", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -187,13 +189,30 @@ public class JobListFragment extends Fragment {
 
 
     private void handleResponsePromo(JobListResponse clientResponse) {
+
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
-            error.setVisibility(View.GONE);
-            joblist.clear();
-            joblist.addAll(clientResponse.getData().getMember());
-            recyclerView.setAdapter(jobListAdapter);
-            jobListAdapter.notifyDataSetChanged();
+            if(clientResponse.getData().getCurrentStatus()==1){
+                String model = gson.toJson(clientResponse.getData().getAssigned());
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(model), "ConfirmOrderFragment")
+                        .commit();
+            }else if(clientResponse.getData().getCurrentStatus()==2){
+                String model = gson.toJson(clientResponse.getData().getAssigned());
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(model), "ConfirmDeliveryFragment")
+                        .commit();
+            }else {
+                error.setVisibility(View.GONE);
+                joblist.clear();
+                joblist.addAll(clientResponse.getData().getMember());
+                recyclerView.setAdapter(jobListAdapter);
+                jobListAdapter.notifyDataSetChanged();
+            }
         }else{
             recyclerView.setAdapter(null);
             error.setVisibility(View.VISIBLE);

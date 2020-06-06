@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,8 +119,8 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         apiInterface = ApiUtils.getService();
         gson = new Gson();
         jobResponse = gson.fromJson(mParam1, JobListResponse.Member.class);
-
-        pickup = (TextView)myview.findViewById(R.id.tvPickup);
+        Log.d("Great", "jobResponse "+jobResponse);
+        pickup = (TextView)myview.findViewById(R.id.tvName);
         pickup.setText(jobResponse.getPickupLocation());
         cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
         cashMode.setText(jobResponse.getPaymentMode());
@@ -131,11 +132,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 //serviceStart.clickService("Start");
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
-                        .commit();
-                sentStatus("2");
+                sentStatus(2);
             }
         });
 
@@ -152,11 +149,11 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
     }
 
 
-    public void sentStatus(String status){
+    public void sentStatus(int status){
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getTaskID(), 2) //
+            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getTaskID(), status) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -174,7 +171,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
+                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(mParam1), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
                         .commit();
 //            } else {
 //                getFragmentManager()
@@ -266,8 +263,10 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        LatLng latLng = new LatLng(22.342096,91.830318);
-        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
+//        LatLng latLng = new LatLng(22.342096,91.830318);
+//        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
+        LatLng latLng = new LatLng(jobResponse.getDropLatitude(),jobResponse.getDropLongitude());
+        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
         marker.showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
     }

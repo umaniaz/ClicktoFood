@@ -11,7 +11,9 @@ package com.food.clicktofood.Retrofit;
 //import com.myapps.x.models.*;
 
 import com.food.clicktofood.Model.DutyStatus;
+import com.food.clicktofood.Model.ImageUploadResponse;
 import com.food.clicktofood.Model.JobListResponse;
+import com.food.clicktofood.Model.LocationResponse;
 import com.food.clicktofood.Model.LoginResponse;
 import com.food.clicktofood.Model.StatusPostingResponse;
 
@@ -45,11 +47,15 @@ public interface APIInterface {
                                                    @Query("taskid") String firtaskidebaseToken,
                                                    @Query("status") Integer status);
 
+    @GET("GetLatlon") //location
+    Observable<LocationResponse>postLocation(@Query("lat") Double lat,
+                                             @Query("lon") Double lon,
+                                             @Query("agentID") String agentID);
 
-//    @Multipart
-//    @POST("ncsapi.ashx?cmnd=_REQUISITIONV2_")
-//    Observable<PostingResponse> postMedicineRequisitionData(@Part("cartData") String cartData,
-//                                                            @Part MultipartBody.Part profile_image);
+
+    @Multipart
+    @POST("PostImagetest")
+    Observable<ImageUploadResponse> postImage(@Part MultipartBody.Part profile_image);
 
 
 

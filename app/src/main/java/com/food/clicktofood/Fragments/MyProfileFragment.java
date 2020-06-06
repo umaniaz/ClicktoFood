@@ -1,11 +1,15 @@
 package com.food.clicktofood.Fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +18,8 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +27,20 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.ReturnMode;
 import com.esafirm.imagepicker.model.Image;
 import com.food.clicktofood.Adapter.FileUtil;
 import com.food.clicktofood.Adapter.InternalDataProvider;
+import com.food.clicktofood.AfterLoginActivity;
+import com.food.clicktofood.Model.DutyStatus;
+import com.food.clicktofood.Model.ImageUploadResponse;
+import com.food.clicktofood.Model.LoginResponse;
 import com.food.clicktofood.R;
+import com.food.clicktofood.Retrofit.APIInterface;
+import com.food.clicktofood.Retrofit.ApiUtils;
 import com.food.clicktofood.SessionData.SessionData;
 import com.food.clicktofood.SingleImageFragmentForNormalView;
 import com.squareup.picasso.MemoryPolicy;
@@ -41,7 +54,12 @@ import java.io.IOException;
 import java.util.List;
 
 import id.zelory.compressor.Compressor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,10 +81,14 @@ public class MyProfileFragment extends Fragment {
     TextView phone, email;
     SessionData sessionData;
     ImageView imgCat;
-
+    ProgressDialog dialog;
+    private CompositeDisposable mCompositeDisposable;
+    APIInterface apiInterface;
     MultipartBody.Part profile_image;
     File imageFIle, actualImage, compressedImage;
     String FilePathStr = "";
+    LoginResponse sessionResponse;
+    ImageView passViewHide;
 
     public static MyProfileFragment newInstance() {
         MyProfileFragment fragment = new MyProfileFragment();
@@ -118,8 +140,31 @@ public class MyProfileFragment extends Fragment {
         phone.setText(sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo());
         email.setText(sessionData.getUserDataModel().getData().getMember().get(0).getEmail());
         password.setText(sessionData.getUserDataModel().getData().getMember().get(0).getPassword());
-
+        mCompositeDisposable = new CompositeDisposable();
+        apiInterface = ApiUtils.getService();
         FilePathStr = "";
+        sessionResponse = new LoginResponse();
+
+        passViewHide = (ImageView)myview.findViewById(R.id.imgPassword);
+        passViewHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
+                    passViewHide.setImageResource(R.drawable.eye_latest_open);
+
+                    //Show Password
+                    password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                }
+                else{
+                    passViewHide.setImageResource(R.drawable.eye_logo);
+
+                    //Hide Password
+                    password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+                }
+            }
+        });
+
         imgCat = (ImageView)myview.findViewById(R.id.imgCat);
         imgCat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,6 +220,128 @@ public class MyProfileFragment extends Fragment {
         return myview;
     }
 
+
+    public void postImage(){
+
+        if(FilePathStr.length()<1){
+            //profile_image = null;
+
+//                RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), "");
+//                profile_image = MultipartBody.Part.createFormData("profile_image", "", requestFile);
+//                Log.d(TAG, "No image "+profile_image);
+
+            imageFIle = new File(null + "");
+            profile_image = null;
+        }else{
+            imageFIle = new File(FilePathStr);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFIle);
+            profile_image = MultipartBody.Part.createFormData("profile_image", imageFIle.getName(), requestFile);
+            Log.d(TAG, "Yes image "+profile_image);
+        }
+
+
+        if(isNetworkAvailable()){
+            dialog = ProgressDialog.show(getActivity(), "", "Posting image. Please wait.....", true);
+            mCompositeDisposable.add(apiInterface.postImage(profile_image) //
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponsePromo, this::handleErrorPromo));
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //finish();
+                }
+            });
+            ad.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            ad.setMessage("Please check your internet connection and try again");
+            ad.show();
+        }
+    }
+
+
+    private void handleResponsePromo(ImageUploadResponse clientResponse) {
+        Log.d(TAG, "Image response "+clientResponse);
+        dialog.dismiss();
+        if(clientResponse.getIsSuccess()){
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Picasso.get()
+                            .load(clientResponse.getData().getFilename())
+                            .memoryPolicy(MemoryPolicy.NO_CACHE)
+                            .networkPolicy(NetworkPolicy.NO_CACHE)
+                            .fit()
+                            .centerCrop()
+                            .placeholder(R.drawable.person_placeholder)
+                            .error(R.drawable.person_placeholder)
+                            .into(imgCat);
+
+                    sessionResponse = sessionData.getUserDataModel();
+                    sessionResponse.getData().getMember().get(0).setPicture(clientResponse.getData().getFilename());
+                    sessionData.setUserDataModel(sessionResponse);
+                }
+            });
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                }
+            });
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
+        }
+
+    }
+
+    private void handleErrorPromo(Throwable error) {
+        dialog.dismiss();
+        Log.d(TAG, "Error "+error);
+        AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+        ad.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                postImage();
+            }
+        });
+        ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        ad.setMessage("Something went wrong, please try again");
+        ad.setCancelable(false);
+        ad.show();
+//        Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isNetworkAvailable(){
+
+        ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE); // from arman
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else return false;
+    }
+
     //----------- image processing ----------------------
 
     @Override
@@ -182,7 +349,7 @@ public class MyProfileFragment extends Fragment {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             List<Image> images = ImagePicker.getImages(data);
 //          Image image = ImagePicker.getFirstImageOrNull(data);
-            //Log.d(TAG, "image path "+images.get(0).getPath());
+            Log.d(TAG, "image path "+images.get(0).getPath());
             FilePathStr = images.get(0).getPath();
             Bitmap selectedImage = BitmapFactory.decodeFile(FilePathStr);
             //imgselectedImage.setImageBitmap(selectedImage);
@@ -273,13 +440,15 @@ public class MyProfileFragment extends Fragment {
             // exp; make progressbar gone
 
             imageFIle = file;
-
+                //postImage();
         }
     }
 
     //---------------------------------------------------
 
     //==============================================
+
+
 
 
     @Override

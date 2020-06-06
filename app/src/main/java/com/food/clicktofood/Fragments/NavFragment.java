@@ -54,7 +54,7 @@ public class NavFragment extends Fragment {
 
     View myview;
     Switch onOffSwitch;
-    TextView profileEdit, logout;
+    TextView profileEdit, logout, allTask;
     SessionData sessionData;
     ImageView imgCat;
     ProgressDialog dialog;
@@ -107,6 +107,15 @@ public class NavFragment extends Fragment {
         apiInterface = ApiUtils.getService();
         sessionResponse = new LoginResponse();
         imgCat = (ImageView)myview.findViewById(R.id.imgCat);
+        allTask = (TextView) myview.findViewById(R.id.tvAllTask);
+        allTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AfterLoginActivity.getInstance().setDrawerOnClick();
+                startActivity(new Intent(getActivity(), AfterLoginActivity.class));
+            }
+        });
+
         profileEdit = (TextView)myview.findViewById(R.id.tvEdit);
         profileEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,9 +202,11 @@ public class NavFragment extends Fragment {
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             Log.d(TAG, "duty status to save "+clientResponse.getData().getMember().get(0).getDutyStatus());
+
             sessionResponse = sessionData.getUserDataModel();
             sessionResponse.getData().getMember().get(0).setDutyStatus(clientResponse.getData().getMember().get(0).getDutyStatus());
             sessionData.setUserDataModel(sessionResponse);
+            AfterLoginActivity.getInstance().setDrawerOnClick();
             startActivity(new Intent(getActivity(), AfterLoginActivity.class));
             //getActivity().finish();
 

@@ -119,7 +119,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         gson = new Gson();
         jobResponse = gson.fromJson(mParam1, JobListResponse.Member.class);
 
-        pickup = (TextView)myview.findViewById(R.id.tvPickup);
+        pickup = (TextView)myview.findViewById(R.id.tvName);
         pickup.setText(jobResponse.getPickupLocation());
         cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
         cashMode.setText(jobResponse.getPaymentMode());
@@ -259,8 +259,10 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        LatLng latLng = new LatLng(22.342096,91.830318);
-        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
+//        LatLng latLng = new LatLng(22.342096,91.830318);
+//        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
+        LatLng latLng = new LatLng(jobResponse.getDropLatitude(),jobResponse.getDropLongitude());
+        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
         marker.showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
     }

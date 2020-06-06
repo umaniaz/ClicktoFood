@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.food.clicktofood.Adapter.ServiceStart;
 import com.food.clicktofood.AfterLoginActivity;
+import com.food.clicktofood.Model.DutyStatus;
 import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.LoginResponse;
 import com.food.clicktofood.Model.StatusPostingResponse;
@@ -81,6 +83,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         ConfirmRequestFragment fragment = new ConfirmRequestFragment();
         return fragment;
     }
+    int status = 0;
 
     public ConfirmRequestFragment() {
         // Required empty public constructor
@@ -126,19 +129,21 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         mCompositeDisposable = new CompositeDisposable();
         apiInterface = ApiUtils.getService();
 
-//        pickup = (TextView)myview.findViewById(R.id.tvPickup);
-//        pickup.setText(jobResponse.getPickupLocation());
-//        cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
-//        cashMode.setText(jobResponse.getPaymentMode());
-//        amount = (TextView)myview.findViewById(R.id.tvTotalValue);
-//        amount.setText(String.format("%,.2f", jobResponse.getTotalAmount()));
+        pickup = (TextView)myview.findViewById(R.id.tvPickup);
+        pickup.setText(jobResponse.getPickupLocation());
+        cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
+        cashMode.setText(jobResponse.getPaymentMode());
+        amount = (TextView)myview.findViewById(R.id.tvTotalValue);
+        amount.setText(String.format("%,.2f", jobResponse.getTotalAmount()));
 
         accept = (Button)myview.findViewById(R.id.btnAccept);
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //serviceStart.clickService("Start");
-                sentStatus(1);
+                status = 1;
+                //getDuty();
+                sentStatus(status);
             }
         });
 
@@ -147,7 +152,8 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
                 //serviceStart.clickService("Stop");
-                sentStatus(0);
+                status = 0;
+                sentStatus(status);
             }
         });
         mapView.onCreate(savedInstanceState);
@@ -197,6 +203,71 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         }
     }
 
+//    public void getDuty(){
+//
+//        if(isNetworkAvailable()){
+//            dialog = ProgressDialog.show(getActivity(), "", "Getting duty status. Please wait.....", true);
+//            mCompositeDisposable.add(apiInterface.getDutyStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), sessionData.getUserDataModel().getData().getMember().get(0).getFirebaseToken()) //
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(this::handleResponsePromo, this::handleErrorPromo));
+//        }else{
+//            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+//            ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    //finish();
+//                }
+//            });
+//            ad.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                }
+//            });
+//            ad.setMessage("Please check your internet connection and try again");
+//            ad.show();
+//        }
+//    }
+//
+//
+//    private void handleResponsePromo(DutyStatus clientResponse) {
+//        Log.d("Sohan", "Login response "+clientResponse);
+//        dialog.dismiss();
+//        if(clientResponse.getIsSuccess()){
+//            Log.d("Sohan", "duty status to save "+clientResponse.getData().getMember().get(0).getDutyStatus());
+//            if (getFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
+//                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                getFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+//                    .commit();
+//        } else {
+//                getFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+//                    .commit();
+//        }
+//        }else{
+//            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+//            ad.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                }
+//            });
+//            ad.setMessage(clientResponse.getMessage());
+//            ad.setCancelable(false);
+//            ad.show();
+//        }
+//
+//    }
+//
+//    private void handleErrorPromo(Throwable error) {
+//        dialog.dismiss();
+//        Log.d("Sohan", "Error "+error);
+//        Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+//    }
+
     public void sentStatus(Integer status){
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
         if(isNetworkAvailable()){
@@ -214,20 +285,28 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
     private void handleResponsePromo(StatusPostingResponse clientResponse) {
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
-            serviceStart.clickService("Start");
-            if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
+            if(status==1) {
+                serviceStart.clickService("Start");
+                if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
+                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(mParam1), "ConfirmOrderFragment")
+                            .commit();
+                } else {
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(mParam1), "ConfirmOrderFragment")
+                            .commit();
+                }
+            }else{
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(mParam1), "ConfirmOrderFragment")
-                        .commit();
-            } else {
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(mParam1), "ConfirmOrderFragment")
+                        .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
                         .commit();
             }
-            Toast.makeText(getActivity(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }else{
             AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
             ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -268,10 +347,10 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        LatLng latLng = new LatLng(22.342096,91.830318);
-        //LatLng latLng = new LatLng(jobResponse.getDropLatitude(),jobResponse.getDropLongitude());
-        //Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
-        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
+        //LatLng latLng = new LatLng(22.342096,91.830318);
+        LatLng latLng = new LatLng(jobResponse.getDropLatitude(),jobResponse.getDropLongitude());
+        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
+        //Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
         marker.showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
     }

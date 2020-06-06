@@ -43,6 +43,7 @@ import com.food.clicktofood.Fragments.MyProfileFragment;
 import com.food.clicktofood.Fragments.NavFragment;
 import com.food.clicktofood.Fragments.NavigationClickListener;
 import com.food.clicktofood.Model.JobListResponse;
+import com.food.clicktofood.Model.LocationResponse;
 import com.food.clicktofood.Model.LoginResponse;
 import com.food.clicktofood.Retrofit.APIInterface;
 import com.food.clicktofood.Retrofit.ApiUtils;
@@ -82,6 +83,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
     String latitude, longitude;
     int PERMISSION_ID = 44;
     FusedLocationProviderClient mFusedLocationClient;
+    Double lat, lon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,14 +92,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        activityA = this;
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_home);
-
-        drawerToggle = setupDrawerToggle();
-        drawerToggle.setDrawerIndicatorEnabled(false);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
 
         menu = (RelativeLayout)findViewById(R.id.menuHolder);
         menu.setOnClickListener(new View.OnClickListener() {
@@ -108,11 +103,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
             }
         });
 
-        sessionData = new SessionData(getApplicationContext());
-        mCompositeDisposable = new CompositeDisposable();
 
-        apiInterface = ApiUtils.getService();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         logo = (ImageView) findViewById(R.id.imgLogo);
         logo.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +139,24 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
 //                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
 //                    .commit();
 //        }
+        setUI();
+    }
+
+    public void setUI(){
+        activityA = this;
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_home);
+
+        drawerToggle = setupDrawerToggle();
+        drawerToggle.setDrawerIndicatorEnabled(false);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+        sessionData = new SessionData(getApplicationContext());
+        mCompositeDisposable = new CompositeDisposable();
+
+        apiInterface = ApiUtils.getService();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if(getSupportFragmentManager().findFragmentByTag("NavFragment")!=null){
             getSupportFragmentManager().popBackStack("NavFragment", 0);
@@ -158,25 +167,39 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                     .commit();
         }
 
+//        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
+//            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+//                    .commit();
+//        } else {
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+//                    .commit();
+//        }
+
         if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
                     .commit();
         } else {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragmentHolder, new ConfirmRequestFragment().newInstance(), "ConfirmRequestFragment")
+                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
                     .commit();
         }
     }
 
-    public void postLogin(){
+
+    public void postLocation(){
 
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.postLogin(sessionData.getUserDataModel().getData().getMember().get(0).getEmail(),sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo(),"88991",sessionData.getUserDataModel().getData().getMember().get(0).getFirebaseToken()) //
+            mCompositeDisposable.add(apiInterface.postLocation(lat, lon, sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -186,13 +209,12 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
     }
 
 
-    private void handleResponsePromo(LoginResponse clientResponse) {
+    private void handleResponsePromo(LocationResponse clientResponse) {
         //dialog.dismiss();
         if(clientResponse.getIsSuccess()){
-            sessionData.setUserDataModel(clientResponse);
-            Log.d("Azad", "Login response success "+clientResponse.getData().getMember().get(0).getFullName());
             //startActivity(new Intent(getApplicationContext(), AfterLoginActivity.class));
-
+            Log.d("Azad", "location api response "+clientResponse);
+            Toast.makeText(getApplicationContext(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(getApplicationContext(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -201,7 +223,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
 
     private void handleErrorPromo(Throwable error) {
         //dialog.dismiss();
-        Toast.makeText(getApplicationContext(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Something went wrong, in updating location", Toast.LENGTH_SHORT).show();
     }
 
     private boolean isNetworkAvailable(){
@@ -342,8 +364,11 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                                 if (location == null) {
                                     requestNewLocationData();
                                 } else {
+                                    lat = location.getLatitude();
+                                    lon = location.getLongitude();
                                     Log.d("Azad", "in final Latitude "+location.getLatitude()+ " Longitude "+location.getLongitude());
                                     // call network
+                                    postLocation();
                                 }
                             }
                         }
@@ -362,6 +387,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
     @Override
     protected void onResume() {
         super.onResume();
+        //setUI();
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("my-event-location-track"));
     }
@@ -371,7 +397,9 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
         public void onReceive(Context context, Intent intent) {
             // Extract data included in the Intent
             String message = intent.getStringExtra("locationTrack");
+            Toast.makeText(getApplicationContext(), "Message "+message, Toast.LENGTH_LONG).show();
             if(message.equals("off")){
+                Toast.makeText(getApplicationContext(), "OFf in afterlogin ", Toast.LENGTH_LONG).show();
                 LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMessageReceiver);
             }else {
                 getLastLocation();
