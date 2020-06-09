@@ -112,7 +112,8 @@ public class NavFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 AfterLoginActivity.getInstance().setDrawerOnClick();
-                startActivity(new Intent(getActivity(), AfterLoginActivity.class));
+                AfterLoginActivity.getInstance().setUI();
+                //startActivity(new Intent(getActivity(), AfterLoginActivity.class));
             }
         });
 
@@ -121,6 +122,7 @@ public class NavFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 AfterLoginActivity.getInstance().setDrawerOnClick();
+                //AfterLoginActivity.getInstance().setUI();
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment").addToBackStack("MyProfileFragment")
@@ -207,7 +209,8 @@ public class NavFragment extends Fragment {
             sessionResponse.getData().getMember().get(0).setDutyStatus(clientResponse.getData().getMember().get(0).getDutyStatus());
             sessionData.setUserDataModel(sessionResponse);
             AfterLoginActivity.getInstance().setDrawerOnClick();
-            startActivity(new Intent(getActivity(), AfterLoginActivity.class));
+            AfterLoginActivity.getInstance().setUI();
+            //startActivity(new Intent(getActivity(), AfterLoginActivity.class));
             //getActivity().finish();
 
             //sessionData.getUserDataModel().getData().getMember().get(0).setDutyStatus(clientResponse.getData().getMember().get(0).getDutyStatus());

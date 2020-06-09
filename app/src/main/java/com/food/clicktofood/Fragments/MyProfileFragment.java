@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +37,7 @@ import com.esafirm.imagepicker.model.Image;
 import com.food.clicktofood.Adapter.FileUtil;
 import com.food.clicktofood.Adapter.InternalDataProvider;
 import com.food.clicktofood.AfterLoginActivity;
+import com.food.clicktofood.Model.DataUpdatePostModel;
 import com.food.clicktofood.Model.DutyStatus;
 import com.food.clicktofood.Model.ImageUploadResponse;
 import com.food.clicktofood.Model.LoginResponse;
@@ -89,6 +92,7 @@ public class MyProfileFragment extends Fragment {
     String FilePathStr = "";
     LoginResponse sessionResponse;
     ImageView passViewHide;
+    Button update;
 
     public static MyProfileFragment newInstance() {
         MyProfileFragment fragment = new MyProfileFragment();
@@ -131,6 +135,11 @@ public class MyProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         myview = inflater.inflate(R.layout.fragment_my_profile, container, false);
+        createUI();
+        return myview;
+    }
+
+    public void createUI(){
         name = (EditText)myview.findViewById(R.id.etName);
         password = (EditText)myview.findViewById(R.id.etPassword);
         phone = (TextView)myview.findViewById(R.id.tvPhone);
@@ -139,11 +148,20 @@ public class MyProfileFragment extends Fragment {
         name.setText(sessionData.getUserDataModel().getData().getMember().get(0).getFullName());
         phone.setText(sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo());
         email.setText(sessionData.getUserDataModel().getData().getMember().get(0).getEmail());
-        password.setText(sessionData.getUserDataModel().getData().getMember().get(0).getPassword());
+        //password.setText(sessionData.getUserDataModel().getData().getMember().get(0).getPassword());
         mCompositeDisposable = new CompositeDisposable();
         apiInterface = ApiUtils.getService();
         FilePathStr = "";
         sessionResponse = new LoginResponse();
+
+        update = (Button)myview.findViewById(R.id.btnLogin);
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                postDataUpdate();
+            }
+        });
+
 
         passViewHide = (ImageView)myview.findViewById(R.id.imgPassword);
         passViewHide.setOnClickListener(new View.OnClickListener() {
@@ -216,8 +234,6 @@ public class MyProfileFragment extends Fragment {
                 .placeholder(R.drawable.person_placeholder)
                 .error(R.drawable.person_placeholder)
                 .into(imgCat);
-
-        return myview;
     }
 
 
@@ -328,6 +344,113 @@ public class MyProfileFragment extends Fragment {
 //        Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
     }
 
+    public void postDataUpdate(){
+
+        if(isNetworkAvailable()){
+//            DataUpdatePostModel dataUpdatePostModel = new DataUpdatePostModel();
+            String nameString, passwordString;
+            if(name.getText().toString().equals("")){
+                nameString = "null";
+            }else{
+                nameString = name.getText().toString();
+            }
+//            dataUpdatePostModel.setEmpID(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID());
+//            dataUpdatePostModel.setFullName(sessionData.getUserDataModel().getData().getMember().get(0).getFullName());
+//            dataUpdatePostModel.setPhoneNo(sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo());
+            if(password.getText().toString().equals("")){
+                passwordString = "null";
+            }else {
+                passwordString = password.getText().toString();
+            }
+            Log.d(TAG, "Agent id "+sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()+"nameString "+nameString+ " password "+passwordString);
+//            dataUpdatePostModel.setEmpType(sessionData.getUserDataModel().getData().getMember().get(0).getEmpType());
+//            dataUpdatePostModel.setPicture(sessionData.getUserDataModel().getData().getMember().get(0).getPicture());
+//            dataUpdatePostModel.setCreatedAt(sessionData.getUserDataModel().getData().getMember().get(0).getCreatedAt());
+//            dataUpdatePostModel.setTrackID(sessionData.getUserDataModel().getData().getMember().get(0).getTrackID());
+//            dataUpdatePostModel.setFirebaseToken(sessionData.getUserDataModel().getData().getMember().get(0).getFirebaseToken());
+//            dataUpdatePostModel.setDutyStatus(sessionData.getUserDataModel().getData().getMember().get(0).getDutyStatus());
+
+            dialog = ProgressDialog.show(getActivity(), "", "Updating data. Please wait.....", true);
+            mCompositeDisposable.add(apiInterface.postDataUpdate(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), nameString, passwordString) //
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponseUpdate, this::handleErrorUpdate));
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //finish();
+                }
+            });
+            ad.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            ad.setMessage("Please check your internet connection and try again");
+            ad.show();
+        }
+    }
+
+
+    private void handleResponseUpdate(LoginResponse clientResponse) {
+        Log.d(TAG, "Data update response "+clientResponse);
+        dialog.dismiss();
+        if(clientResponse.getIsSuccess()){
+            sessionData.setUserDataModel(clientResponse);
+            Log.d(TAG, "name "+sessionData.getUserDataModel().getData().getMember().get(0).getFullName());
+            Log.d(TAG, "number "+sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo());
+            if (getFragmentManager().findFragmentByTag("MyProfileFragment") != null) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+                        .commit();
+            } else {
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+                        .commit();
+            }
+            Toast.makeText(getActivity(), "Profile updated", Toast.LENGTH_LONG).show();
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                }
+            });
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
+        }
+
+    }
+
+    private void handleErrorUpdate(Throwable error) {
+        dialog.dismiss();
+        Log.d(TAG, "Error "+error);
+        AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+        ad.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                postDataUpdate();
+            }
+        });
+        ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        ad.setMessage("Something went wrong, please try again");
+        ad.setCancelable(false);
+        ad.show();
+//        Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+    }
+
     private boolean isNetworkAvailable(){
 
         ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE); // from arman
@@ -366,13 +489,16 @@ public class MyProfileFragment extends Fragment {
             try {
 
                 //actualImage = FileUtil.from(getActivity(), data.getData());
+                Log.d(TAG, "369");
                 actualImage = FileUtil.from(getActivity(), getImageUri(getActivity(), selectedImage));
 
-
+                Log.d(TAG, "372");
                 Bitmap compressedImageBitmap = new Compressor(getActivity()).compressToBitmap(actualImage);
+                Log.d(TAG, "374");
                 imgCat.setImageBitmap(compressedImageBitmap);
+                Log.d(TAG, "376");
                 new fileFromBitmap(compressedImageBitmap, getActivity()).execute();
-
+                Log.d(TAG, "378");
                 //------ check file size ------
 //                ByteArrayOutputStream streams = new ByteArrayOutputStream();
 //                compressedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, streams);
@@ -388,9 +514,13 @@ public class MyProfileFragment extends Fragment {
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {
+        Log.d(TAG, "394");
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        Log.d(TAG, "396");
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        Log.d(TAG, "398");
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, inImage.toString(), null);
+        Log.d(TAG, "400");
         return Uri.parse(path);
     }
 

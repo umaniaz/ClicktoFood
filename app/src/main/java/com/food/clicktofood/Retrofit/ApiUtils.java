@@ -9,7 +9,8 @@ import android.content.Context;
 public class ApiUtils {
     private static Context mContext;
     //public static final String BASE_URL = "http://119.18.148.10/cshop/xapi/";
-    public static final String BASE_URL = "http://3.134.89.59:8083/api/Agents/";
+    //public static final String BASE_URL = "http://3.134.89.59:8083/api/Agents/";
+    public static final String BASE_URL = "http://18.220.161.232:8083/api/Agents/";
 
 
 

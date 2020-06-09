@@ -92,39 +92,6 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
-        menu = (RelativeLayout)findViewById(R.id.menuHolder);
-        menu.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("WrongConstant")
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(Gravity.START);
-            }
-        });
-
-
-
-        logo = (ImageView) findViewById(R.id.imgLogo);
-        logo.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("WrongConstant")
-            @Override
-            public void onClick(View view) {
-                if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                } else {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                }
-            }
-        });
-
         Log.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
 
 //        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
@@ -158,6 +125,40 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
         apiInterface = ApiUtils.getService();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+
+
+        menu = (RelativeLayout)findViewById(R.id.menuHolder);
+        menu.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("WrongConstant")
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(Gravity.START);
+            }
+        });
+
+
+
+        logo = (ImageView) findViewById(R.id.imgLogo);
+        logo.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("WrongConstant")
+            @Override
+            public void onClick(View view) {
+                if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                } else {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                }
+            }
+        });
+
+
         if(getSupportFragmentManager().findFragmentByTag("NavFragment")!=null){
             getSupportFragmentManager().popBackStack("NavFragment", 0);
         }else {
@@ -167,31 +168,31 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                     .commit();
         }
 
-//        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
-//            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-//                    .commit();
-//        } else {
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-//                    .commit();
-//        }
-
-        if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
+        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
                     .commit();
         } else {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
                     .commit();
         }
+
+//        if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
+//            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+//                    .commit();
+//        } else {
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+//                    .commit();
+//        }
     }
 
 

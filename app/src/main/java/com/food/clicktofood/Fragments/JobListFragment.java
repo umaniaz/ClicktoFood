@@ -189,7 +189,7 @@ public class JobListFragment extends Fragment {
 
 
     private void handleResponsePromo(JobListResponse clientResponse) {
-
+        Log.d(TAG, "Joblist response "+clientResponse);
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             if(clientResponse.getData().getCurrentStatus()==1){

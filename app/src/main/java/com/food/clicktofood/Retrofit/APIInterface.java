@@ -10,6 +10,7 @@ package com.food.clicktofood.Retrofit;
 
 //import com.myapps.x.models.*;
 
+import com.food.clicktofood.Model.DataUpdatePostModel;
 import com.food.clicktofood.Model.DutyStatus;
 import com.food.clicktofood.Model.ImageUploadResponse;
 import com.food.clicktofood.Model.JobListResponse;
@@ -19,6 +20,7 @@ import com.food.clicktofood.Model.StatusPostingResponse;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -56,6 +58,12 @@ public interface APIInterface {
     @Multipart
     @POST("PostImagetest")
     Observable<ImageUploadResponse> postImage(@Part MultipartBody.Part profile_image);
+
+
+    @GET("GetProfileUpdate")
+    Observable<LoginResponse> postDataUpdate(@Query("agentid") String agentid,
+                                             @Query("FullName") String FullName,
+                                             @Query("password") String password);
 
 
 

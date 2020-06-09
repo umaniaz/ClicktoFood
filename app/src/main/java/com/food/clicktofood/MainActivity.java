@@ -1,6 +1,7 @@
 package com.food.clicktofood;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     String newToken;
     SessionData sessionData;
     ImageView passViewHide;
-
+    AppCompatCheckBox chk;
 //    Name: Click Food
 //    Email:ondemandclick2food@gmail.com
 //    pass: Clicktofood2020
@@ -54,23 +55,60 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sessionData = new SessionData(getApplicationContext());
 
-        if(sessionData.getUserDataModel() != null){
-            startActivity(new Intent(getApplicationContext(), AfterLoginActivity.class));
-            finish();
-        }else {
+//        if(sessionData.getUserDataModel() != null){
+//            setContentView(R.layout.activity_main);
+//            //startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//            mCompositeDisposable = new CompositeDisposable();
+//            apiInterface = ApiUtils.getService();
+//            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
+//                newToken = instanceIdResult.getToken();
+//                Log.d(TAG, "Token " + newToken);
+//            });
+//            //postLogin(sessionData.getUserDataModel().getData().getMember().get(0).getEmail(),sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo(),sessionData.getUserDataModel().getData().getMember().get(0).getPassword(),newToken);
+//            //finish();
+//        }else {
             setContentView(R.layout.activity_main);
+             sessionData = new SessionData(getApplicationContext());
+             chk = (AppCompatCheckBox)findViewById(R.id.chkRememberMe);
             mCompositeDisposable = new CompositeDisposable();
             apiInterface = ApiUtils.getService();
-
+            sessionData = new SessionData(getApplicationContext());
             String refreshedToken = FirebaseInstanceId.getInstance().getToken();
             Log.d(TAG, "FCM token: " + refreshedToken);
 
             phone = (EditText) findViewById(R.id.etPhone);
             email = (EditText) findViewById(R.id.etEmail);
             password = (EditText) findViewById(R.id.etPassword);
+
+            if(sessionData.getUserDataModel() != null){
+                if(sessionData.getRememberMe()){
+                    chk.setChecked(true);
+                    phone.setText(sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo());
+                    email.setText(sessionData.getUserDataModel().getData().getMember().get(0).getEmail());
+                    password.setText(sessionData.getPassword());
+                }else{
+                    chk.setChecked(false);
+                }
+            }else{
+
+            }
             forgotPassword = (TextView) findViewById(R.id.tvForgotPassword);
+            forgotPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+                    ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    ad.setTitle("FORGOT PASSWORD");
+                    ad.setMessage("Please contact our support team for this operation");
+                    ad.show();
+                }
+            });
             passViewHide = (ImageView) findViewById(R.id.imgPassword);
             passViewHide.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -102,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     if (validate() == null) {
-                        postLogin();
+                        postLogin(email.getText().toString(), phone.getText().toString(), password.getText().toString(), newToken);
                     } else {
                         Toast.makeText(getApplicationContext(), validate(), Toast.LENGTH_LONG).show();
                     }
                 }
             });
-        }
+        //}
     }
 
     private String validate() {
@@ -132,11 +170,11 @@ public class MainActivity extends AppCompatActivity {
         return isValid;
     }
 
-        public void postLogin(){
+        public void postLogin(String email, String phone, String password, String token){
 
         if(isNetworkAvailable()){
             dialog = ProgressDialog.show(MainActivity.this, "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.postLogin(email.getText().toString(), phone.getText().toString(), password.getText().toString(), newToken) //
+            mCompositeDisposable.add(apiInterface.postLogin(email, phone, password, token) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -165,6 +203,13 @@ public class MainActivity extends AppCompatActivity {
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             sessionData.setUserDataModel(clientResponse);
+            if(chk.isChecked()){
+                sessionData.setRememberMe(true);
+                sessionData.setPassword(password.getText().toString());
+            }else{
+                sessionData.setRememberMe(false);
+                sessionData.setPassword("");
+            }
             startActivity(new Intent(getApplicationContext(), AfterLoginActivity.class));
             finish();
         }else{
@@ -172,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
             ad.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 }
             });
             ad.setMessage(clientResponse.getMessage());
@@ -184,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
     private void handleErrorPromo(Throwable error) {
         dialog.dismiss();
         Log.d(TAG, "Error "+error);
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        //  finish();
         Toast.makeText(getApplicationContext(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
     }
 
