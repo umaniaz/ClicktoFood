@@ -215,7 +215,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
         if(clientResponse.getIsSuccess()){
             //startActivity(new Intent(getApplicationContext(), AfterLoginActivity.class));
             Log.d("Azad", "location api response "+clientResponse);
-            Toast.makeText(getApplicationContext(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(getApplicationContext(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -375,7 +375,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                         }
                 );
             } else {
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
             }
@@ -398,9 +398,9 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
         public void onReceive(Context context, Intent intent) {
             // Extract data included in the Intent
             String message = intent.getStringExtra("locationTrack");
-            Toast.makeText(getApplicationContext(), "Message "+message, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Message "+message, Toast.LENGTH_LONG).show();
             if(message.equals("off")){
-                Toast.makeText(getApplicationContext(), "OFf in afterlogin ", Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(), "OFf in afterlogin ", Toast.LENGTH_LONG).show();
                 LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMessageReceiver);
             }else {
                 getLastLocation();

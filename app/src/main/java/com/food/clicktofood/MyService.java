@@ -83,7 +83,7 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(getApplicationContext(), "onStartCommand", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "onStartCommand", Toast.LENGTH_LONG).show();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForeground(1, notification);
         } else {
@@ -164,7 +164,7 @@ public class MyService extends Service {
     }
 
     public void stop() {
-        Toast.makeText(getApplicationContext(), "Stopped", Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext(), "Stopped", Toast.LENGTH_LONG).show();
         started = false;
         handler.removeCallbacks(runnable);
     }
@@ -182,13 +182,13 @@ public class MyService extends Service {
         intent.putExtra("locationTrack", "off");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
-        Toast.makeText(getApplicationContext(), "OnDestroy", Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext(), "OnDestroy", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Toast.makeText(getApplicationContext(), "onBind", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "onBind", Toast.LENGTH_LONG).show();
         return null;
     }
 

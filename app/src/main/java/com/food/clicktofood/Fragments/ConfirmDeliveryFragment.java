@@ -178,11 +178,21 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         if(clientResponse.getIsSuccess()){
             serviceStart.clickService("Stop");
             // if (getFragmentManager().findFragmentByTag("JobListFragment") != null || getFragmentManager().findFragmentByTag("ConfirmOrderFragment") != null) {
-            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment").addToBackStack("JobListFragment")
-                    .commit();
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment").addToBackStack("JobListFragment")
+                            .commit();
+                }
+            });
+
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
 //            } else {
 //                getFragmentManager()
 //                        .beginTransaction()

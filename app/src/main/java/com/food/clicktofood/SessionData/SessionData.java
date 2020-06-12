@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.food.clicktofood.Model.LoginResponse;
+import com.food.clicktofood.Model.NewUserModel;
 import com.google.gson.Gson;
 
 public class SessionData {
@@ -15,21 +16,25 @@ public class SessionData {
     private static final String APPSTATE = "app_state";
     private static final String REMEMBERME = "remember_me";
     private static final String PASSWORD = "password";
+    private static final String NEWUSERMODEL = "user_model_new";
 
     private final String BASIC_PREFS = "xlimited";
     private final String BASIC_PREFS_APP_STATE = "appState";
     private final String BASIC_PREFS_REMEMBER_ME = "rememberMe";
     private final String BASIC_PREFS_PASSWORD = "password";
+    private final String BASIC_PREFS_NEWUSERMODEL = "user_model_new";
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences sharedPreferencesAppState;
     private SharedPreferences sharedPreferencesRememberMe;
     private SharedPreferences sharedPreferencesPassword;
+    private SharedPreferences sharedPreferencesNewUserModel;
 
     private SharedPreferences.Editor editor;
     private SharedPreferences.Editor editorAppState;
     private SharedPreferences.Editor editorRememberMe;
     private SharedPreferences.Editor editorPassword;
+    private SharedPreferences.Editor editorNewModel;
 
     private Gson gson;
 
@@ -40,11 +45,13 @@ public class SessionData {
         sharedPreferencesAppState = this.context.getSharedPreferences(BASIC_PREFS_APP_STATE, Context.MODE_PRIVATE);
         sharedPreferencesRememberMe = this.context.getSharedPreferences(BASIC_PREFS_REMEMBER_ME, Context.MODE_PRIVATE);
         sharedPreferencesPassword = this.context.getSharedPreferences(BASIC_PREFS_PASSWORD, Context.MODE_PRIVATE);
+        sharedPreferencesNewUserModel = this.context.getSharedPreferences(BASIC_PREFS_NEWUSERMODEL, Context.MODE_PRIVATE);
 
         editor = sharedPreferences.edit();
         editorAppState = sharedPreferencesAppState.edit();
         editorRememberMe = sharedPreferencesRememberMe.edit();
         editorPassword = sharedPreferencesPassword.edit();
+        editorNewModel = sharedPreferencesNewUserModel.edit();
     }
 
     public LoginResponse getUserDataModel() {
@@ -65,6 +72,26 @@ public class SessionData {
         String str = gson.toJson(model);
         editor.putString(USERDATAMODEL, str);
         editor.commit();
+    }
+
+    public NewUserModel getNewUserModel() {
+        String str = sharedPreferencesNewUserModel.getString(NEWUSERMODEL, null);
+        NewUserModel model = null;
+        if (str != null) {
+            try {
+                model = gson.fromJson(str, NewUserModel.class);
+            } catch (Exception e) {
+                Log.d(TAG, "exception " + e.toString());
+                model = null;
+            }
+        }
+        return model;
+    }
+
+    public void setNewUserModel(NewUserModel model) {
+        String str = gson.toJson(model);
+        editorNewModel.putString(NEWUSERMODEL, str);
+        editorNewModel.commit();
     }
 
     public void setAppState(Boolean value){
@@ -99,9 +126,9 @@ public class SessionData {
     public void clearPrefData() {
         editor.clear();
         editor.commit();
-        editorRememberMe.clear();
-        editorRememberMe.commit();
-        editorPassword.commit();
-        editorPassword.commit();
+//        editorRememberMe.clear();
+//        editorRememberMe.commit();
+//        editorPassword.commit();
+//        editorPassword.commit();
     }
 }

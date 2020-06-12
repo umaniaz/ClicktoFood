@@ -187,41 +187,41 @@ public class MyProfileFragment extends Fragment {
         imgCat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
-                ad.setCancelable(true);
-                ad.setTitle("Upload Image");
-                ad.setItems(new String[]{"Take Picture", "Select from gallery"}, (dialog, which) -> {
-                    switch (which) {
-                        case 0:
-                            ImagePicker.cameraOnly().start(MyProfileFragment.this);
-                            break;
-                        case 1:
-                            ImagePicker.create(MyProfileFragment.this) // Activity or Fragment
-                                    .returnMode(ReturnMode.NONE) // set whether pick and / or camera action should return immediate result or not.
-                                    .folderMode(true) // folder mode (false by default)
-                                    .toolbarFolderTitle("Folder") // folder selection title
-                                    .toolbarImageTitle("Tap to select") // image selection title
-                                    .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
-                                    .includeVideo(false) // Show video on image picker
-                                    .single() // single mode
-                                    .multi() // multi mode (default mode)
-                                    .limit(1) // max images can be selected (99 by default)
-                                    .showCamera(false) // show camera or not (true by default)
-                                    .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
-                                    .origin(null) // original selected images, used in multi mode
-                                    .exclude(null) // exclude anything that in image.getPath()
-                                    .enableLog(false) // disabling log
-                                    .start(); // start image picker activity with request code
-                            break;
-//                        case 2:
-//                            File f = new File(FilePathStr);
-//                            InternalDataProvider.getInstance().setImageFile(f);
-//                            SingleImageFragmentForNormalView singleImageFragment = SingleImageFragmentForNormalView.newInstance();
-//                            singleImageFragment.show(getActivity().getSupportFragmentManager(), "Hello");
+//                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+//                ad.setCancelable(true);
+//                ad.setTitle("Upload Image");
+//                ad.setItems(new String[]{"Take Picture", "Select from gallery"}, (dialog, which) -> {
+//                    switch (which) {
+//                        case 0:
+//                            ImagePicker.cameraOnly().start(MyProfileFragment.this);
 //                            break;
-                    }
-                });
-                ad.show();
+//                        case 1:
+//                            ImagePicker.create(MyProfileFragment.this) // Activity or Fragment
+//                                    .returnMode(ReturnMode.NONE) // set whether pick and / or camera action should return immediate result or not.
+//                                    .folderMode(true) // folder mode (false by default)
+//                                    .toolbarFolderTitle("Folder") // folder selection title
+//                                    .toolbarImageTitle("Tap to select") // image selection title
+//                                    .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
+//                                    .includeVideo(false) // Show video on image picker
+//                                    .single() // single mode
+//                                    .multi() // multi mode (default mode)
+//                                    .limit(1) // max images can be selected (99 by default)
+//                                    .showCamera(false) // show camera or not (true by default)
+//                                    .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+//                                    .origin(null) // original selected images, used in multi mode
+//                                    .exclude(null) // exclude anything that in image.getPath()
+//                                    .enableLog(false) // disabling log
+//                                    .start(); // start image picker activity with request code
+//                            break;
+////                        case 2:
+////                            File f = new File(FilePathStr);
+////                            InternalDataProvider.getInstance().setImageFile(f);
+////                            SingleImageFragmentForNormalView singleImageFragment = SingleImageFragmentForNormalView.newInstance();
+////                            singleImageFragment.show(getActivity().getSupportFragmentManager(), "Hello");
+////                            break;
+//                    }
+//                });
+//                ad.show();
             }
         });
 
@@ -400,6 +400,7 @@ public class MyProfileFragment extends Fragment {
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             sessionData.setUserDataModel(clientResponse);
+            sessionData.setPassword(password.getText().toString());
             Log.d(TAG, "name "+sessionData.getUserDataModel().getData().getMember().get(0).getFullName());
             Log.d(TAG, "number "+sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo());
             if (getFragmentManager().findFragmentByTag("MyProfileFragment") != null) {
