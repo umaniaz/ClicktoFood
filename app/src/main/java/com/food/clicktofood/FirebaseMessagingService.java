@@ -1,15 +1,22 @@
 package com.food.clicktofood;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -21,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import io.opencensus.internal.Utils;
 
 //import com.bumptech.glide.request.animation.GlideAnimation;
 
@@ -36,6 +45,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     private String mTitle,mDescription;
     LocalBroadcastManager broadcaster;
     public static String TestContent = "Sohan";
+    String CHANNEL_ID="1234";
+
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
@@ -72,16 +83,86 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         String channelId = "Default";
-        NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent);;
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Uri soundUri = Uri.parse("android.resource://com.food.clicktofood/raw/can_we_kiss_forever");
+        Log.d(TAG, "uri "+soundUri);
+
+        //==================== new / test ===================================
+
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        //For API 26+ you need to put some additional code like below:
+        NotificationChannel mChannel;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_DEFAULT);
-            manager.createNotificationChannel(channel);
+            mChannel = new NotificationChannel(CHANNEL_ID, "Test", NotificationManager.IMPORTANCE_HIGH);
+            mChannel.setLightColor(Color.GRAY);
+            mChannel.enableLights(true);
+            mChannel.enableVibration(true);
+            mChannel.setVibrationPattern(new long[]{ 0 });
+            //mChannel.setDescription(Utils.CHANNEL_SIREN_DESCRIPTION);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+            mChannel.setSound(soundUri, audioAttributes);
+
+            if (mNotificationManager != null) {
+                mNotificationManager.createNotificationChannel( mChannel );
+            }
         }
-        manager.notify(0, builder.build());
+        //else {
+
+//            NotificationCompat.Builder status = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
+//            status.setAutoCancel(true)
+//                    .setWhen(System.currentTimeMillis())
+//                    .setSmallIcon(R.mipmap.ic_launcher)
+//                    //.setOnlyAlertOnce(true)
+//                    .setContentTitle(remoteMessage.getNotification().getTitle())
+//                    .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent)
+//                    //.setContentText(messageBody)
+//                    .setVibrate(new long[]{0, 500, 1000})
+//                    .setDefaults(Notification.DEFAULT_LIGHTS)
+//                    .setSound(soundUri)
+//                    .setContentIntent(pendingIntent);
+//            //.setContent(views);
+//
+//            mNotificationManager.notify(0, status.build());
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setContentTitle(remoteMessage.getNotification().getTitle())
+                //.setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, MainActivity_.class), 0))
+                .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setSound(soundUri)
+                .setDefaults(Notification.DEFAULT_LIGHTS)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                //.setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.mipmap.ic_launcher);
+
+        Notification notification = builder.build();
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notification);
+        //notificationManager.notify(0, builder.build());
+        //}
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        v.vibrate(3000);
+
+        //====================================================================
+
+        //=================== previous working ==============================
+//        NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, channelId)
+//                .setSmallIcon(R.mipmap.ic_launcher)
+//                .setContentTitle(remoteMessage.getNotification().getTitle())
+//                .setSound(soundUri)
+//                .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent);;
+//        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            NotificationChannel channel = new NotificationChannel(channelId, "Default channel", NotificationManager.IMPORTANCE_DEFAULT);
+//            manager.createNotificationChannel(channel);
+//        }
+//        manager.notify(0, builder.build());
+        //==================================================================
 
 //        broadcaster = LocalBroadcastManager.getInstance(getBaseContext());
 //        Intent newintent = new Intent(TestContent);

@@ -55,19 +55,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        if(sessionData.getUserDataModel() != null){
-//            setContentView(R.layout.activity_main);
-//            //startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//            mCompositeDisposable = new CompositeDisposable();
-//            apiInterface = ApiUtils.getService();
+        sessionData = new SessionData(getApplicationContext());
+        setContentView(R.layout.activity_main);
+        password = (EditText) findViewById(R.id.etPassword);
+        chk = (AppCompatCheckBox)findViewById(R.id.chkRememberMe);
+        if(sessionData.getUserDataModel() != null){
+            //setContentView(R.layout.activity_main);
+            //startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            mCompositeDisposable = new CompositeDisposable();
+            apiInterface = ApiUtils.getService();
 //            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
 //                newToken = instanceIdResult.getToken();
 //                Log.d(TAG, "Token " + newToken);
 //            });
-//            //postLogin(sessionData.getUserDataModel().getData().getMember().get(0).getEmail(),sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo(),sessionData.getUserDataModel().getData().getMember().get(0).getPassword(),newToken);
-//            //finish();
-//        }else {
+            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+            password.setText(sessionData.getUserDataModel().getData().getMember().get(0).getPassword());
+            postLogin(sessionData.getUserDataModel().getData().getMember().get(0).getEmail(),sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo(),password.getText().toString(),refreshedToken);
+            //finish();
+        }else {
             setContentView(R.layout.activity_main);
              sessionData = new SessionData(getApplicationContext());
              chk = (AppCompatCheckBox)findViewById(R.id.chkRememberMe);
@@ -146,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-        //}
+        }
     }
 
     private String validate() {
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
         public void postLogin(String email, String phone, String password, String token){
-
+        Log.d(TAG, "email "+email+" phone "+phone+" password "+password+" token "+token);
         if(isNetworkAvailable()){
             dialog = ProgressDialog.show(MainActivity.this, "", "Signing in. Please wait.....", true);
             mCompositeDisposable.add(apiInterface.postLogin(email, phone, password, token) //
@@ -202,7 +207,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Login response "+clientResponse);
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
-            sessionData.setUserDataModel(clientResponse);
+            LoginResponse dummy = new LoginResponse();
+            dummy = clientResponse;
+            dummy.getData().getMember().get(0).setPassword(password.getText().toString());
+            sessionData.setUserDataModel(dummy);
             if(chk.isChecked()){
                 sessionData.setRememberMe(true);
                 sessionData.setPassword(password.getText().toString());

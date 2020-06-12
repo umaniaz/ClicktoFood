@@ -62,7 +62,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS=23;
-
+    private final String TAG = "ctf_"+this.getClass().getSimpleName();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -272,6 +272,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
+            Log.d(TAG, "Id"+sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()+" task id "+jobResponse.getTaskID()+" status "+status);
             mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getTaskID(), status) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -284,6 +285,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
 
     private void handleResponsePromo(StatusPostingResponse clientResponse) {
         dialog.dismiss();
+        Log.d(TAG, "Job Request response "+clientResponse);
         if(clientResponse.getIsSuccess()){
             if(status==1) {
                 serviceStart.clickService("Start");
@@ -325,6 +327,7 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
 
     private void handleErrorPromo(Throwable error) {
         dialog.dismiss();
+        Log.d(TAG, "Error in sent status "+error);
         Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
     }
 
