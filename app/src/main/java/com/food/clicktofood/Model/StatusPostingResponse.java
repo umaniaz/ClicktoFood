@@ -48,6 +48,8 @@ public class StatusPostingResponse {
         this.isSuccess = isSuccess;
     }
 
+//    http://18.220.161.232:8083/api/Agents/TaskAcceptOrReject?agentID=EMP201&taskid=T201&status=1
+//    http://18.220.161.232:8083/api/Agents/GetTaskAcceptOrReject?agentID=EMP201&taskid=T201&status=1
     @Override
     public String toString() {
         return "StatusPostingResponse{" +

@@ -182,11 +182,18 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
             ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment").addToBackStack("JobListFragment")
-                            .commit();
+                    if (getFragmentManager().findFragmentByTag("JoblistFragment") != null || getFragmentManager().findFragmentByTag("ConfirmOrderFragment") != null) {
+                        getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        getFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")//.addToBackStack("JobListFragment")
+                                .commit();
+                    }else{
+                        getFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")//.addToBackStack("JobListFragment")
+                                .commit();
+                    }
                 }
             });
 

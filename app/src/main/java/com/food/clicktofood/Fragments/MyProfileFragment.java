@@ -225,15 +225,18 @@ public class MyProfileFragment extends Fragment {
             }
         });
 
-        Picasso.get()
-                .load(sessionData.getUserDataModel().getData().getMember().get(0).getPicture())
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .networkPolicy(NetworkPolicy.NO_CACHE)
-                .fit()
-                .centerCrop()
-                .placeholder(R.drawable.person_placeholder)
-                .error(R.drawable.person_placeholder)
-                .into(imgCat);
+        if(sessionData.getUserDataModel().getData().getMember().get(0).getPicture().equals("")) {
+        }else{
+            Picasso.get()
+                    .load(sessionData.getUserDataModel().getData().getMember().get(0).getPicture())
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .fit()
+                    .centerCrop()
+                    .placeholder(R.drawable.person_placeholder)
+                    .error(R.drawable.person_placeholder)
+                    .into(imgCat);
+        }
     }
 
 

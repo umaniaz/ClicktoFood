@@ -167,18 +167,18 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
 
-           // if (getFragmentManager().findFragmentByTag("JobListFragment") != null || getFragmentManager().findFragmentByTag("ConfirmOrderFragment") != null) {
+           if ( getFragmentManager().findFragmentByTag("JoblistFragment") != null || getFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(mParam1), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
+                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(mParam1), "ConfirmDeliveryFragment")//.addToBackStack("ConfirmDeliveryFragment")
                         .commit();
-//            } else {
-//                getFragmentManager()
-//                        .beginTransaction()
-//                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(), "ConfirmDeliveryFragment").addToBackStack("ConfirmDeliveryFragment")
-//                        .commit();
-//            }
+            } else {
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(mParam1), "ConfirmDeliveryFragment")//.addToBackStack("ConfirmDeliveryFragment")
+                        .commit();
+            }
 
         }else{
             AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());

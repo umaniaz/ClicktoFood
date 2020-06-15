@@ -77,13 +77,17 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Log.d(TAG, "onMessageReceived: " + remoteMessage);
+        Log.d(TAG, "onMessageReceived: " + remoteMessage.getData());
+        Log.d(TAG, "onMessageReceived: " + remoteMessage.getData().get("appName"));
+        Log.d(TAG, "onMessageReceived: " + remoteMessage.getData().get("body"));
+        //Log.d(TAG, "onMessageReceived title : " + remoteMessage.getNotification().getTitle());
+        //Log.d(TAG, "onMessageReceived body: " + remoteMessage.getNotification().getBody());
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         String channelId = "Default";
-        Uri soundUri = Uri.parse("android.resource://com.food.clicktofood/raw/can_we_kiss_forever");
+        Uri soundUri = Uri.parse("android.resource://com.food.clicktofood/raw/short_sms_tone");
         Log.d(TAG, "uri "+soundUri);
 
         //==================== new / test ===================================
@@ -127,17 +131,20 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 //
 //            mNotificationManager.notify(0, status.build());
 
+        //2020-06-15 00:22:26.102 2634-2952/com.food.clicktofood D/c2f_FirebaseMessagingService: onMessageReceived: {message={"senderName":"Web","senderId":123,"appName":"clicktoFood","body":"Task Created","title":"Task ID : "}}
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                .setContentTitle(remoteMessage.getNotification().getTitle())
+                .setContentTitle(remoteMessage.getData().get("appName"))
+
                 //.setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, MainActivity_.class), 0))
-                .setContentText(remoteMessage.getNotification().getBody()).setAutoCancel(true).setContentIntent(pendingIntent)
+
+                .setContentText(remoteMessage.getData().get("body")).setAutoCancel(true).setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setSound(soundUri)
                 .setDefaults(Notification.DEFAULT_LIGHTS)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 //.setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher);
+                .setSmallIcon(R.mipmap.main_logo);
 
         Notification notification = builder.build();
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);

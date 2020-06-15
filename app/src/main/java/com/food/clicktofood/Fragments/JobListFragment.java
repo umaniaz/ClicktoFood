@@ -129,6 +129,7 @@ public class JobListFragment extends Fragment {
                         .commit();
             }
         });
+
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
