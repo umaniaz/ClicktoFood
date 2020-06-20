@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.food.clicktofood.Adapter.CustomMapView;
 import com.food.clicktofood.Adapter.ServiceStart;
 import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.StatusPostingResponse;
@@ -59,7 +60,8 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
     private String mParam2;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
-    MapView mapView;
+    //MapView mapView;
+    CustomMapView mapView;
     View myview;
     Button accept, reject;
     ServiceStart serviceStart;
@@ -110,7 +112,8 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         myview = inflater.inflate(R.layout.fragment_confirm_order, container, false);
-        mapView = (MapView) myview.findViewById(R.id.mapview);
+        //mapView = (MapView) myview.findViewById(R.id.mapview);
+        mapView = (CustomMapView)myview.findViewById(R.id.mapview);
 
         serviceStart = (ServiceStart) getActivity();
 
@@ -121,11 +124,11 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         jobResponse = gson.fromJson(mParam1, JobListResponse.Member.class);
         Log.d("Great", "jobResponse "+jobResponse);
         pickup = (TextView)myview.findViewById(R.id.tvName);
-        pickup.setText(jobResponse.getPickupLocation());
+        pickup.setText(jobResponse.getN().getPickupLocation());
         cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
-        cashMode.setText(jobResponse.getPaymentMode());
+        cashMode.setText(jobResponse.getN().getPaymentMode());
         amount = (TextView)myview.findViewById(R.id.tvTotalValue);
-        amount.setText(String.format("%,.2f", jobResponse.getTotalAmount()));
+        amount.setText(String.format("%,.2f", jobResponse.getN().getTotalAmount()));
 
         accept = (Button)myview.findViewById(R.id.btnAccept);
         accept.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +156,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getTaskID(), status) //
+            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getN().getTaskID(), status) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -265,8 +268,8 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
 //        LatLng latLng = new LatLng(22.342096,91.830318);
 //        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
-        LatLng latLng = new LatLng(jobResponse.getDropLatitude(),jobResponse.getDropLongitude());
-        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
+        LatLng latLng = new LatLng(jobResponse.getM().getLatitude(),jobResponse.getM().getLongitude());
+        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getN().getPickupLocation()).position(latLng));
         marker.showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
     }

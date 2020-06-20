@@ -403,7 +403,10 @@ public class MyProfileFragment extends Fragment {
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             sessionData.setUserDataModel(clientResponse);
-            sessionData.setPassword(password.getText().toString());
+            if(password.getText().toString().equals("")) {
+            }else{
+                sessionData.setPassword(password.getText().toString());
+            }
             Log.d(TAG, "name "+sessionData.getUserDataModel().getData().getMember().get(0).getFullName());
             Log.d(TAG, "number "+sessionData.getUserDataModel().getData().getMember().get(0).getPhoneNo());
             if (getFragmentManager().findFragmentByTag("MyProfileFragment") != null) {

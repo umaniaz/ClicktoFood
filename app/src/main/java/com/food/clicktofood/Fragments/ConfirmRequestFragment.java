@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.food.clicktofood.Adapter.CustomMapView;
 import com.food.clicktofood.Adapter.ServiceStart;
 import com.food.clicktofood.AfterLoginActivity;
 import com.food.clicktofood.Model.DutyStatus;
@@ -68,7 +69,8 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
     private String mParam2;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
-    MapView mapView;
+    //MapView mapView;
+    CustomMapView mapView;
     View myview;
     Button accept, reject;
     ServiceStart serviceStart;
@@ -119,7 +121,10 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         myview = inflater.inflate(R.layout.fragment_confirm_request, container, false);
-        mapView = (MapView) myview.findViewById(R.id.mapview);
+        //mapView = (MapView) myview.findViewById(R.id.mapview);
+
+        mapView = (CustomMapView)myview.findViewById(R.id.mapview);
+
 
         serviceStart = (ServiceStart) getActivity();
         gson = new Gson();
@@ -130,19 +135,20 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         apiInterface = ApiUtils.getService();
 
         pickup = (TextView)myview.findViewById(R.id.tvPickup);
-        pickup.setText(jobResponse.getPickupLocation());
+        pickup.setText(jobResponse.getN().getPickupLocation());
         cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
-        cashMode.setText(jobResponse.getPaymentMode());
+        cashMode.setText(jobResponse.getN().getPaymentMode());
         amount = (TextView)myview.findViewById(R.id.tvTotalValue);
-        amount.setText(String.format("%,.2f", jobResponse.getTotalAmount()));
+        amount.setText(String.format("%,.2f", jobResponse.getN().getTotalAmount()));
 
         accept = (Button)myview.findViewById(R.id.btnAccept);
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //serviceStart.clickService("Start");
+                //getDuty;
+
                 status = 1;
-                //getDuty();
                 sentStatus(status);
             }
         });
@@ -272,8 +278,8 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            Log.d(TAG, "Id"+sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()+" task id "+jobResponse.getTaskID()+" status "+status);
-            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getTaskID(), status) //
+            //Log.d(TAG, "Id"+sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()+" task id "+jobResponse.getTaskID()+" status "+status);
+            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getN().getTaskID(), status) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -314,7 +320,18 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
             ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                    if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
+                        getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        getFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                                .commit();
+                    } else {
+                        getFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                                .commit();
+                    }
                 }
             });
 
@@ -351,8 +368,9 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         //LatLng latLng = new LatLng(22.342096,91.830318);
-        LatLng latLng = new LatLng(jobResponse.getDropLatitude(),jobResponse.getDropLongitude());
-        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
+        LatLng latLng = new LatLng(jobResponse.getM().getLatitude(),jobResponse.getM().getLongitude());
+        //Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
+        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getN().getPickupLocation()).position(latLng));
         //Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
         marker.showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));

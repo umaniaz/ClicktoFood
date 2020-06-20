@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void postLogin(String email, String phone, String password, String token){
         Log.d(TAG, "email "+email+" phone "+phone+" password "+password+" token "+token);
+
         if(isNetworkAvailable()){
             dialog = ProgressDialog.show(MainActivity.this, "", "Signing in. Please wait.....", true);
             mCompositeDisposable.add(apiInterface.postLogin(email, phone, password, token) //
