@@ -368,12 +368,28 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         //LatLng latLng = new LatLng(22.342096,91.830318);
-        LatLng latLng = new LatLng(jobResponse.getM().getLatitude(),jobResponse.getM().getLongitude());
+        //if(jobResponse.getM().getLatitude().equals(null) || jobResponse.getM().getLongitude().equals(null)){
+
+        Double latitude = jobResponse.getM().getLatitude();
+        Double longitude = jobResponse.getM().getLongitude();
+        if(latitude == null || longitude == null){
+            LatLng latLng = new LatLng(0.0, 0.0);
+            Marker marker = mMap.addMarker(new MarkerOptions().title("Invalid coordinates").position(latLng));
+            marker.showInfoWindow();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+        }else {
+            LatLng latLng = new LatLng(latitude, longitude);
+            Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getN().getPickupLocation()).position(latLng));
+            marker.showInfoWindow();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+        }
         //Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getCustomerAddress()).position(latLng));
-        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getN().getPickupLocation()).position(latLng));
         //Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
-        marker.showInfoWindow();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+
+        // previous
+//        Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getN().getPickupLocation()).position(latLng));
+//        marker.showInfoWindow();
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
     }
 
     @Override
