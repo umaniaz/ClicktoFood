@@ -519,6 +519,9 @@ public class JobListResponse{
         @SerializedName("m")
         @Expose
         private M m;
+        @SerializedName("o")
+        @Expose
+        private O o;
 
         public N getN() {
             return n;
@@ -536,11 +539,126 @@ public class JobListResponse{
             this.m = m;
         }
 
+        public O getO() {
+            return o;
+        }
+
+        public void setO(O o) {
+            this.o = o;
+        }
+
         @Override
         public String toString() {
             return "Member{" +
                     "n=" + n +
                     ", m=" + m +
+                    ", o=" + o +
+                    '}';
+        }
+    }
+
+    public class O {
+
+        @SerializedName("ID")
+        @Expose
+        private Integer iD;
+        @SerializedName("BranchCode")
+        @Expose
+        private String branchCode;
+        @SerializedName("PartnerName")
+        @Expose
+        private String partnerName;
+        @SerializedName("BranchName")
+        @Expose
+        private String branchName;
+        @SerializedName("BranchLocation")
+        @Expose
+        private String branchLocation;
+        @SerializedName("Latitude")
+        @Expose
+        private Double latitude;
+        @SerializedName("Longitude")
+        @Expose
+        private Double longitude;
+        @SerializedName("BranchPhone")
+        @Expose
+        private Object BranchPhone;
+
+        public Integer getID() {
+            return iD;
+        }
+
+        public void setID(Integer iD) {
+            this.iD = iD;
+        }
+
+        public String getBranchCode() {
+            return branchCode;
+        }
+
+        public void setBranchCode(String branchCode) {
+            this.branchCode = branchCode;
+        }
+
+        public String getPartnerName() {
+            return partnerName;
+        }
+
+        public void setPartnerName(String partnerName) {
+            this.partnerName = partnerName;
+        }
+
+        public String getBranchName() {
+            return branchName;
+        }
+
+        public void setBranchName(String branchName) {
+            this.branchName = branchName;
+        }
+
+        public String getBranchLocation() {
+            return branchLocation;
+        }
+
+        public void setBranchLocation(String branchLocation) {
+            this.branchLocation = branchLocation;
+        }
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(Double latitude) {
+            this.latitude = latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(Double longitude) {
+            this.longitude = longitude;
+        }
+
+        public Object getBranchPhone() {
+            return BranchPhone;
+        }
+
+        public void setBranchPhone(Object branchPhone) {
+            BranchPhone = branchPhone;
+        }
+
+        @Override
+        public String toString() {
+            return "O{" +
+                    "iD=" + iD +
+                    ", branchCode='" + branchCode + '\'' +
+                    ", partnerName='" + partnerName + '\'' +
+                    ", branchName='" + branchName + '\'' +
+                    ", branchLocation='" + branchLocation + '\'' +
+                    ", latitude=" + latitude +
+                    ", longitude=" + longitude +
+                    ", BranchPhone=" + BranchPhone +
                     '}';
         }
     }
@@ -607,6 +725,9 @@ public class JobListResponse{
         @SerializedName("BranchCode")
         @Expose
         private String branchCode;
+        @SerializedName("DropNotes")
+        @Expose
+        private Object dropNotes;
 
         public String getTaskID() {
             return taskID;
@@ -768,6 +889,14 @@ public class JobListResponse{
             this.branchCode = branchCode;
         }
 
+        public Object getDropNotes() {
+            return dropNotes;
+        }
+
+        public void setDropNotes(Object dropNotes) {
+            this.dropNotes = dropNotes;
+        }
+
         @Override
         public String toString() {
             return "N{" +
@@ -791,6 +920,7 @@ public class JobListResponse{
                     ", createdAt=" + createdAt +
                     ", trackID=" + trackID +
                     ", branchCode='" + branchCode + '\'' +
+                    ", dropNotes=" + dropNotes +
                     '}';
         }
     }
@@ -857,6 +987,9 @@ public class JobListResponse{
         @SerializedName("BranchCode")
         @Expose
         private String branchCode;
+        @SerializedName("DropNotes")
+        @Expose
+        private Object dropNotes;
 
         public String getTaskID() {
             return taskID;
@@ -1018,6 +1151,14 @@ public class JobListResponse{
             this.branchCode = branchCode;
         }
 
+        public Object getDropNotes() {
+            return dropNotes;
+        }
+
+        public void setDropNotes(Object dropNotes) {
+            this.dropNotes = dropNotes;
+        }
+
         @Override
         public String toString() {
             return "N_{" +
@@ -1041,6 +1182,7 @@ public class JobListResponse{
                     ", createdAt=" + createdAt +
                     ", trackID=" + trackID +
                     ", branchCode='" + branchCode + '\'' +
+                    ", dropNotes=" + dropNotes +
                     '}';
         }
     }
@@ -1053,6 +1195,9 @@ public class JobListResponse{
         @SerializedName("m")
         @Expose
         private M_ m;
+        @SerializedName("o")
+        @Expose
+        private O_ o;
 
         public N_ getN() {
             return n;
@@ -1070,11 +1215,126 @@ public class JobListResponse{
             this.m = m;
         }
 
+        public O_ getO() {
+            return o;
+        }
+
+        public void setO(O_ o) {
+            this.o = o;
+        }
+
         @Override
         public String toString() {
             return "Assigned{" +
                     "n=" + n +
                     ", m=" + m +
+                    ", o=" + o +
+                    '}';
+        }
+    }
+
+    public class O_ {
+
+        @SerializedName("ID")
+        @Expose
+        private Integer iD;
+        @SerializedName("BranchCode")
+        @Expose
+        private String branchCode;
+        @SerializedName("PartnerName")
+        @Expose
+        private String partnerName;
+        @SerializedName("BranchName")
+        @Expose
+        private String branchName;
+        @SerializedName("BranchLocation")
+        @Expose
+        private String branchLocation;
+        @SerializedName("Latitude")
+        @Expose
+        private Double latitude;
+        @SerializedName("Longitude")
+        @Expose
+        private Double longitude;
+        @SerializedName("BranchPhone")
+        @Expose
+        private Object BranchPhone;
+
+        public Integer getID() {
+            return iD;
+        }
+
+        public void setID(Integer iD) {
+            this.iD = iD;
+        }
+
+        public String getBranchCode() {
+            return branchCode;
+        }
+
+        public void setBranchCode(String branchCode) {
+            this.branchCode = branchCode;
+        }
+
+        public String getPartnerName() {
+            return partnerName;
+        }
+
+        public void setPartnerName(String partnerName) {
+            this.partnerName = partnerName;
+        }
+
+        public String getBranchName() {
+            return branchName;
+        }
+
+        public void setBranchName(String branchName) {
+            this.branchName = branchName;
+        }
+
+        public String getBranchLocation() {
+            return branchLocation;
+        }
+
+        public void setBranchLocation(String branchLocation) {
+            this.branchLocation = branchLocation;
+        }
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(Double latitude) {
+            this.latitude = latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(Double longitude) {
+            this.longitude = longitude;
+        }
+
+        public Object getBranchPhone() {
+            return BranchPhone;
+        }
+
+        public void setBranchPhone(Object branchPhone) {
+            BranchPhone = branchPhone;
+        }
+
+        @Override
+        public String toString() {
+            return "O_{" +
+                    "iD=" + iD +
+                    ", branchCode='" + branchCode + '\'' +
+                    ", partnerName='" + partnerName + '\'' +
+                    ", branchName='" + branchName + '\'' +
+                    ", branchLocation='" + branchLocation + '\'' +
+                    ", latitude=" + latitude +
+                    ", longitude=" + longitude +
+                    ", BranchPhone=" + BranchPhone +
                     '}';
         }
     }

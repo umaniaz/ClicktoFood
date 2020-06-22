@@ -179,7 +179,7 @@ public class JobListFragment extends Fragment {
         dialog = ProgressDialog.show(getActivity(), "", "Data retrieving. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.getJobList(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()) //
+            mCompositeDisposable.add(apiInterface.getJobListNew(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));

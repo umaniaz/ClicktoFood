@@ -45,6 +45,9 @@ public interface APIInterface {
     @GET("GetTaskList") //LOGIN
     Observable<JobListResponse>getJobList(@Query("agentID") String agentID);
 
+    @GET("GetTaskListV1") //LOGIN
+    Observable<JobListResponse>getJobListNew(@Query("agentID") String agentID);
+
     @GET("GetTaskAcceptOrReject") //LOGIN
     Observable<StatusPostingResponse>postStatus(@Query("agentID") String agentID,
                                                    @Query("taskid") String firtaskidebaseToken,

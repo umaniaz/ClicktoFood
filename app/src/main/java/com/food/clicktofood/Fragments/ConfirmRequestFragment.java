@@ -370,8 +370,8 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
         //LatLng latLng = new LatLng(22.342096,91.830318);
         //if(jobResponse.getM().getLatitude().equals(null) || jobResponse.getM().getLongitude().equals(null)){
 
-        Double latitude = jobResponse.getM().getLatitude();
-        Double longitude = jobResponse.getM().getLongitude();
+        Double latitude = jobResponse.getO().getLatitude();
+        Double longitude = jobResponse.getO().getLongitude();
         if(latitude == null || longitude == null){
             LatLng latLng = new LatLng(0.0, 0.0);
             Marker marker = mMap.addMarker(new MarkerOptions().title("Invalid coordinates").position(latLng));

@@ -1,12 +1,15 @@
 package com.food.clicktofood.Fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
@@ -43,6 +46,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.Manifest.permission.CALL_PHONE;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ConfirmDeliveryFragment#newInstance} factory method to
@@ -53,14 +58,14 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS=23;
+    static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 23;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
-   // MapView mapView;
+    // MapView mapView;
     CustomMapView mapView;
     View myview;
     Button accept, reject;
@@ -71,7 +76,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     SessionData sessionData;
     static JobListResponse.Member jobResponse;
     static Gson gson;
-    TextView pickup, cashMode, amount;
+    TextView pickup, cashMode, amount, dropNotes, phone;
 
     public static ConfirmDeliveryFragment newInstance() {
         ConfirmDeliveryFragment fragment = new ConfirmDeliveryFragment();
@@ -113,7 +118,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         // Inflate the layout for this fragment
         myview = inflater.inflate(R.layout.fragment_confirm_delivery, container, false);
         //mapView = (MapView) myview.findViewById(R.id.mapview);
-        mapView = (CustomMapView)myview.findViewById(R.id.mapview);
+        mapView = (CustomMapView) myview.findViewById(R.id.mapview);
 
         serviceStart = (ServiceStart) getActivity();
         sessionData = new SessionData(getActivity());
@@ -121,6 +126,37 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         apiInterface = ApiUtils.getService();
         gson = new Gson();
         jobResponse = gson.fromJson(mParam1, JobListResponse.Member.class);
+
+        dropNotes = (TextView) myview.findViewById(R.id.tvDropNotes);
+
+        if (jobResponse.getN().getDropNotes() == null) {
+            dropNotes.setText(" ");
+        } else {
+            dropNotes.setText(jobResponse.getN().getDropNotes() + "");
+        }
+
+        phone = (TextView) myview.findViewById(R.id.tvCell);
+        if (jobResponse.getN().getCustomerPhone() == null) {
+            phone.setText("");
+        } else {
+            phone.setText(jobResponse.getN().getCustomerPhone());
+        }
+        phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (jobResponse.getN().getCustomerPhone() == null) {
+                    Toast.makeText(getActivity(), "No phone number ", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + jobResponse.getN().getCustomerPhone()));
+                    if (ContextCompat.checkSelfPermission(getActivity(), CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                        startActivity(callIntent);
+                    } else {
+                        requestPermissions(new String[]{CALL_PHONE}, 1);
+                    }
+                }
+            }
+        });
 
         pickup = (TextView)myview.findViewById(R.id.tvName);
         pickup.setText(jobResponse.getN().getCustomerAddress());
@@ -161,6 +197,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         }
 
     }
+
 
     public void sentStatus(Integer status){
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);

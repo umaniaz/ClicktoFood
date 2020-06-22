@@ -31,7 +31,7 @@ public class AllTaskJobListAdapter extends RecyclerView.Adapter<AllTaskJobListAd
     private final String TAG = "berich_"+this.getClass().getSimpleName();
     SimpleDateFormat dateFormat;
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, pickUp, drop;
+        TextView title, pickUp, drop, amount;
         RelativeLayout fullView;
         ImageView imgCat;
         Context context;
@@ -43,6 +43,7 @@ public class AllTaskJobListAdapter extends RecyclerView.Adapter<AllTaskJobListAd
             title = (TextView) view.findViewById(R.id.tvTitle);
             pickUp = (TextView) view.findViewById(R.id.tvPickUp);
             drop = (TextView) view.findViewById(R.id.tvDrop);
+            amount = (TextView) view.findViewById(R.id.tvAmount);
         }
     }
     public AllTaskJobListAdapter(Context context, List<AllTaskResponseModel.Member> colors, JobClicked jobClicked ) {  //categoryProductClick categoryProductClick
@@ -79,5 +80,6 @@ public class AllTaskJobListAdapter extends RecyclerView.Adapter<AllTaskJobListAd
             holder.pickUp.setText(jobslist.get(position).getPickupLocation());
             holder.title.setText(jobslist.get(position).getCategoryname()+"");
             holder.drop.setText(jobslist.get(position).getCustomerAddress());
+            holder.amount.setText(String.format("%,.2f", jobslist.get(position).getTotalAmount())+" AED");
     }
 }

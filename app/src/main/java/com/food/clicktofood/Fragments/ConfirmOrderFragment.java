@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
@@ -71,7 +73,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
     SessionData sessionData;
     static JobListResponse.Member jobResponse;
     static Gson gson;
-    TextView pickup, cashMode, amount;
+    TextView pickup, cashMode, amount, pickUpNotes, phone;
 
     public static ConfirmOrderFragment newInstance() {
         ConfirmOrderFragment fragment = new ConfirmOrderFragment();
@@ -125,6 +127,35 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         Log.d("Great", "jobResponse "+jobResponse);
         pickup = (TextView)myview.findViewById(R.id.tvName);
         pickup.setText(jobResponse.getN().getPickupLocation());
+        pickUpNotes = (TextView)myview.findViewById(R.id.tvPickupNotes);
+
+        if(jobResponse.getN().getPickupNotes()==null) {
+            pickUpNotes.setText(" ");
+        }else{
+            pickUpNotes.setText(jobResponse.getN().getPickupNotes());
+        }
+
+        phone = (TextView)myview.findViewById(R.id.tvCell);
+        if(jobResponse.getO().getBranchPhone()==null){
+            phone.setText("");
+        }else {
+            phone.setText(jobResponse.getO().getBranchPhone()+"");
+        }
+        phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(jobResponse.getO().getBranchPhone()==null){
+                    Toast.makeText(getActivity(), "No phone number ", Toast.LENGTH_LONG).show();
+                }else {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse(jobResponse.getO().getBranchPhone()+""));
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+
         cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
         cashMode.setText(jobResponse.getN().getPaymentMode());
         amount = (TextView)myview.findViewById(R.id.tvTotalValue);
@@ -269,8 +300,10 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
 //        LatLng latLng = new LatLng(22.342096,91.830318);
 //        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
 
-        Double latitude = jobResponse.getM().getLatitude();
-        Double longitude = jobResponse.getM().getLongitude();
+        //email='sohailjoy63@gmail.com', phoneNo='0569528818'
+
+        Double latitude = jobResponse.getO().getLatitude();
+        Double longitude = jobResponse.getO().getLongitude();
         if(latitude == null || longitude == null){
             LatLng latLng = new LatLng(0.0, 0.0);
             Marker marker = mMap.addMarker(new MarkerOptions().title("Invalid coordinates").position(latLng));
