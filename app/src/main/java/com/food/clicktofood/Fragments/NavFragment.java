@@ -54,7 +54,7 @@ public class NavFragment extends Fragment {
 
     View myview;
     Switch onOffSwitch;
-    TextView profileEdit, logout, allTask;
+    TextView profileEdit, logout, allTask, cashCollections;
     SessionData sessionData;
     ImageView imgCat;
     ProgressDialog dialog;
@@ -112,7 +112,12 @@ public class NavFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 AfterLoginActivity.getInstance().setDrawerOnClick();
-                AfterLoginActivity.getInstance().setUI();
+                //AfterLoginActivity.getInstance().setUI();
+
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new AllTaskFragment().newInstance(), "AllTaskFragment").addToBackStack("AllTaskFragment")
+                        .commit();
                 //startActivity(new Intent(getActivity(), AfterLoginActivity.class));
             }
         });
@@ -126,6 +131,19 @@ public class NavFragment extends Fragment {
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment").addToBackStack("MyProfileFragment")
+                        .commit();
+            }
+        });
+
+        cashCollections = (TextView)myview.findViewById(R.id.tvCashCollection);
+        cashCollections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AfterLoginActivity.getInstance().setDrawerOnClick();
+                //AfterLoginActivity.getInstance().setUI();
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentHolder, new CashCollectionsFragment().newInstance(), "CashCollectionsFragment").addToBackStack("CashCollectionsFragment")
                         .commit();
             }
         });

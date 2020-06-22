@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fafafa"
+    android:clickable="true"
+    tools:context=".Fragments.CashCollectionsFragment">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:background="#023944"
+        android:id="@+id/dateHolder"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Today May 14"
+            android:layout_margin="5dp"
+            android:textColor="#ffffff"
+            android:id="@+id/tvDate"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content">
+        </TextView>
+
+        <ImageView
+            android:layout_toRightOf="@+id/tvDate"
+            android:layout_toEndOf="@id/tvDate"
+            android:layout_width="20dp"
+            android:layout_centerVertical="true"
+            android:tint="#ffffff"
+            android:visibility="gone"
+            android:src="@drawable/down_sign"
+            android:layout_height="20dp">
+        </ImageView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:layout_above="@+id/btnReload"
+        android:layout_below="@+id/dateHolder"
+        android:background="@drawable/border">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/topHolder"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Cash Deliveries : 4"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textAlignment="center"></TextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="#000000"></View>
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Cash Collected : AED 450"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textAlignment="center"></TextView>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_margin="10dp"
+            android:id="@+id/rvJobList"
+            android:layout_below="@+id/topHolder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:id="@+id/tvError"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"></TextView>
+
+    </RelativeLayout>
+
+</RelativeLayout>
