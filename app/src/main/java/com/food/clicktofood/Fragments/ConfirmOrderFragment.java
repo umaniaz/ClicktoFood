@@ -46,6 +46,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.Manifest.permission.CALL_PHONE;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ConfirmOrderFragment#newInstance} factory method to
@@ -147,10 +149,12 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
                 if(jobResponse.getO().getBranchPhone()==null){
                     Toast.makeText(getActivity(), "No phone number ", Toast.LENGTH_LONG).show();
                 }else {
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse(jobResponse.getO().getBranchPhone()+""));
-                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        startActivity(intent);
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + jobResponse.getO().getBranchPhone()+""));
+                    if (ContextCompat.checkSelfPermission(getActivity(), CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                        startActivity(callIntent);
+                    } else {
+                        requestPermissions(new String[]{CALL_PHONE}, 1);
                     }
                 }
             }
@@ -166,7 +170,26 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 //serviceStart.clickService("Start");
-                sentStatus(2);
+
+                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        sentStatus(2);
+                    }
+                });
+                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.setTitle("Confirmation");
+                ad.setMessage("Are you sure to confirm pickup?");
+                ad.setCancelable(false);
+                ad.show();
+
+
             }
         });
 

@@ -148,8 +148,25 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
                 //serviceStart.clickService("Start");
                 //getDuty;
 
-                status = 1;
-                sentStatus(status);
+                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        status = 1;
+                        sentStatus(status);
+                    }
+                });
+                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.setTitle("Confirmation");
+                ad.setMessage("Are you sure to accept the task?");
+                ad.setCancelable(false);
+                ad.show();
+
             }
         });
 
@@ -158,8 +175,25 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
             @Override
             public void onClick(View view) {
                 //serviceStart.clickService("Stop");
-                status = 0;
-                sentStatus(status);
+                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        status = 0;
+                        sentStatus(status);
+                    }
+                });
+                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.setTitle("Confirmation");
+                ad.setMessage("Are you sure to reject the task?");
+                ad.setCancelable(false);
+                ad.show();
+
             }
         });
         mapView.onCreate(savedInstanceState);
@@ -308,11 +342,25 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
                             .commit();
                 }
             }else{
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                        .commit();
+
+//                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                getFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+//                        .commit();
+
+                if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
+                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                } else {
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                }
             }
             //Toast.makeText(getActivity(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }else{

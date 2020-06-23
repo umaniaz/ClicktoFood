@@ -169,7 +169,24 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sentStatus(3);
+
+                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        sentStatus(3);
+                    }
+                });
+                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.setTitle("Confirmation");
+                ad.setMessage("Are you sure to complete the delivery?");
+                ad.setCancelable(false);
+                ad.show();
             }
         });
 

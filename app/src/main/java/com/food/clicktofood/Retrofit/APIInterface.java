@@ -45,8 +45,11 @@ public interface APIInterface {
     @GET("GetTaskList") //LOGIN
     Observable<JobListResponse>getJobList(@Query("agentID") String agentID);
 
-    @GET("GetTaskListV1") //LOGIN
+    @GET("GetTaskListV1") //LOGIN    // V1 for real data
     Observable<JobListResponse>getJobListNew(@Query("agentID") String agentID);
+
+//    @GET("GetTaskListV2") //LOGIN
+//    Observable<JobListResponse>getJobListNew(@Query("agentID") String agentID);
 
     @GET("GetTaskAcceptOrReject") //LOGIN
     Observable<StatusPostingResponse>postStatus(@Query("agentID") String agentID,

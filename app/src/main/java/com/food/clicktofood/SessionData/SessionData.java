@@ -60,6 +60,7 @@ public class SessionData {
         if (str != null) {
             try {
                 model = gson.fromJson(str, LoginResponse.class);
+                Log.d(TAG, "response " + model);
             } catch (Exception e) {
                 Log.d(TAG, "exception " + e.toString());
                 model = null;

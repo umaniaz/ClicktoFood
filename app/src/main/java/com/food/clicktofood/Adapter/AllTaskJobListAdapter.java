@@ -78,7 +78,12 @@ public class AllTaskJobListAdapter extends RecyclerView.Adapter<AllTaskJobListAd
                 }
             });
             holder.pickUp.setText(jobslist.get(position).getPickupLocation());
-            holder.title.setText(jobslist.get(position).getCategoryname()+"");
+            if(jobslist.get(position).getCategoryname()==null){
+                holder.title.setText("");
+            }else{
+                holder.title.setText(jobslist.get(position).getCategoryname()+"");
+            }
+
             holder.drop.setText(jobslist.get(position).getCustomerAddress());
             holder.amount.setText(String.format("%,.2f", jobslist.get(position).getTotalAmount())+" AED");
     }
