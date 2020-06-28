@@ -17,7 +17,6 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:text="Today May 14"
             android:layout_margin="5dp"
             android:textColor="#ffffff"
             android:id="@+id/tvDate"
@@ -31,7 +30,6 @@
             android:layout_width="20dp"
             android:layout_centerVertical="true"
             android:tint="#ffffff"
-            android:visibility="gone"
             android:src="@drawable/down_sign"
             android:layout_height="20dp">
         </ImageView>
@@ -59,9 +57,9 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginEnd="15dp"
+                android:id="@+id/tvTotalTask"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Total Cash Deliveries : 4"
                 android:textStyle="bold"
                 android:textSize="20dp"
                 android:textAlignment="center"></TextView>
@@ -84,8 +82,8 @@
                 android:layout_marginEnd="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Total Cash Collected : AED 450"
                 android:textStyle="bold"
+                android:id="@+id/tvTotalAmount"
                 android:textSize="20dp"
                 android:textAlignment="center"></TextView>
 

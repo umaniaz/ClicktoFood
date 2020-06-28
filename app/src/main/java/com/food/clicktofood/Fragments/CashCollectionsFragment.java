@@ -19,10 +19,10 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.food.clicktofood.Adapter.AllTaskJobListAdapter;
 import com.food.clicktofood.Adapter.CashCollectionListAdapter;
 import com.food.clicktofood.Adapter.JobClicked;
 import com.food.clicktofood.Model.AllTaskResponseModel;
+import com.food.clicktofood.Model.CashCollectionResponse;
 import com.food.clicktofood.R;
 import com.food.clicktofood.Retrofit.APIInterface;
 import com.food.clicktofood.Retrofit.ApiUtils;
@@ -54,15 +54,15 @@ public class CashCollectionsFragment extends Fragment {
     private String mParam2;
 
     View myview;
-    CashCollectionListAdapter jobListAdapter;
+    CashCollectionListAdapter cashListAdapter;
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     SessionData sessionData;
     ProgressDialog dialog;
     private CompositeDisposable mCompositeDisposable;
     APIInterface apiInterface;
-    List<AllTaskResponseModel.Member> joblist;
-    TextView error, dateValue;
+    List<CashCollectionResponse.Member> cashList;
+    TextView error, dateValue, totalTask, totalAmount;
     SimpleDateFormat dateFormat;
 
     public static CashCollectionsFragment newInstance() {
@@ -110,8 +110,10 @@ public class CashCollectionsFragment extends Fragment {
         sessionData = new SessionData(getActivity());
         mCompositeDisposable = new CompositeDisposable();
         apiInterface = ApiUtils.getService();
-        joblist = new ArrayList<>();
+        cashList = new ArrayList<>();
         error = (TextView)myview.findViewById(R.id.tvError);
+        totalTask = (TextView)myview.findViewById(R.id.tvTotalTask);
+        totalAmount = (TextView)myview.findViewById(R.id.tvTotalAmount);
 
         Calendar cal = Calendar.getInstance();
         dateValue = (TextView)myview.findViewById(R.id.tvDate);
@@ -125,7 +127,7 @@ public class CashCollectionsFragment extends Fragment {
                         Calendar newDate = Calendar.getInstance();
                         newDate.set(year, monthOfYear, dayOfMonth);
                         dateValue.setText(dateFormat.format(newDate.getTime()));
-                        //getCashCollectionsList();
+                        getCashCollectionsList();
                     }
                 }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH)
                 );
@@ -136,7 +138,7 @@ public class CashCollectionsFragment extends Fragment {
         dateValue.setText(dateFormat.format(cal.getTime()));
 
         recyclerView = myview.findViewById(R.id.rvJobList);
-        jobListAdapter = new CashCollectionListAdapter(getActivity(), joblist, new JobClicked() {
+        cashListAdapter = new CashCollectionListAdapter(getActivity(), cashList, new JobClicked() {
             @Override
             public void jobClicked(int position) {
 
@@ -148,8 +150,8 @@ public class CashCollectionsFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.hasFixedSize();
-        recyclerView.setAdapter(jobListAdapter);
-        //getCashCollectionsList();
+        recyclerView.setAdapter(cashListAdapter);
+        getCashCollectionsList();
         return myview;
     }
 
@@ -157,7 +159,7 @@ public class CashCollectionsFragment extends Fragment {
         dialog = ProgressDialog.show(getActivity(), "", "Data retrieving. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.getAllJobList(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), dateValue.getText().toString().trim()) //
+            mCompositeDisposable.add(apiInterface.getCashCollection(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), dateValue.getText().toString().trim()) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -167,16 +169,24 @@ public class CashCollectionsFragment extends Fragment {
     }
 
 
-    private void handleResponsePromo(AllTaskResponseModel clientResponse) {
-        Log.d(TAG, "All Joblist response "+clientResponse);
+    private void handleResponsePromo(CashCollectionResponse clientResponse) {
+        Log.d(TAG, "All cashList response "+clientResponse);
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             error.setVisibility(View.GONE);
-            joblist.clear();
-            joblist.addAll(clientResponse.getData().getMember());
-            recyclerView.setAdapter(jobListAdapter);
-            jobListAdapter.notifyDataSetChanged();
+            cashList.clear();
+            cashList.addAll(clientResponse.getData().getMember());
+            recyclerView.setAdapter(cashListAdapter);
+            cashListAdapter.notifyDataSetChanged();
+            totalTask.setText("Total Cash Deliveries : "+cashList.size());
+            double value = 0.0;
+            for(int i=0; i<cashList.size(); i++){
+                value += cashList.get(i).getTotalAmount();
+            }
+            totalAmount.setText("Total Cash Collected : AED "+ String.format("%,.0f",value));
         }else{
+            totalTask.setText("Total Cash Deliveries : 0");
+            totalAmount.setText("Total Cash Collected : AED 0");
             recyclerView.setAdapter(null);
             error.setVisibility(View.VISIBLE);
             error.setText(clientResponse.getMessage());

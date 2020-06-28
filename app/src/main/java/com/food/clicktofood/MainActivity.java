@@ -171,6 +171,93 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void createUIValueChanged(){
+        setContentView(R.layout.activity_main);
+        sessionData = new SessionData(getApplicationContext());
+        chk = (AppCompatCheckBox)findViewById(R.id.chkRememberMe);
+        mCompositeDisposable = new CompositeDisposable();
+        apiInterface = ApiUtils.getService();
+        sessionData = new SessionData(getApplicationContext());
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "FCM token: " + refreshedToken);
+
+        phone = (EditText) findViewById(R.id.etPhone);
+        email = (EditText) findViewById(R.id.etEmail);
+        password = (EditText) findViewById(R.id.etPassword);
+
+        //if(sessionData.getNewUserModel() != null){
+        if(sessionData.getRememberMe()){
+            chk.setChecked(true);
+            phone.setText(sessionData.getNewUserModel().getPhone());
+            email.setText(sessionData.getNewUserModel().getEmail());
+            password.setText(sessionData.getPassword());
+        }else{
+            chk.setChecked(false);
+        }
+//            }else{
+//
+//            }
+        forgotPassword = (TextView) findViewById(R.id.tvForgotPassword);
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+                ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.setTitle("FORGOT PASSWORD");
+                ad.setMessage("Please contact our support team for this operation");
+                ad.show();
+            }
+        });
+        passViewHide = (ImageView) findViewById(R.id.imgPassword);
+        passViewHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
+                    passViewHide.setImageResource(R.drawable.eye_latest_open);
+
+                    //Show Password
+                    password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                }
+                else{
+                    passViewHide.setImageResource(R.drawable.eye_logo);
+
+                    //Hide Password
+                    password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+                }
+            }
+        });
+
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, instanceIdResult -> {
+            newToken = instanceIdResult.getToken();
+            Log.d(TAG, "Token " + newToken);
+        });
+
+        login = (Button) findViewById(R.id.btnLogin);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (validate() == null) {
+                    if(chk.isChecked()){
+                        ischecked = true;
+                    }else{
+                        ischecked = false;
+                    }
+                    passwordValue = password.getText().toString();
+                    postLogin(email.getText().toString(), phone.getText().toString(), passwordValue, newToken);
+                } else {
+                    Toast.makeText(getApplicationContext(), validate(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
     private String validate() {
         //boolean isValid = true;
 
@@ -247,7 +334,8 @@ public class MainActivity extends AppCompatActivity {
             ad.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    //startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    createUIValueChanged();
                 }
             });
             ad.setMessage(clientResponse.getMessage());

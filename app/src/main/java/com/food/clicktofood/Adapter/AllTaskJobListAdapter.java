@@ -85,6 +85,6 @@ public class AllTaskJobListAdapter extends RecyclerView.Adapter<AllTaskJobListAd
             }
 
             holder.drop.setText(jobslist.get(position).getCustomerAddress());
-            holder.amount.setText(String.format("%,.2f", jobslist.get(position).getTotalAmount())+" AED");
+            holder.amount.setText(String.format("%,.0f", jobslist.get(position).getTotalAmount())+" AED");
     }
 }

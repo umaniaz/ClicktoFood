@@ -25,7 +25,6 @@
               android:layout_margin="10dp"
               android:id="@+id/tvTitle"
               android:layout_height="wrap_content"
-              android:text="Food Delivery"
               android:textColor="#000000"
               android:textSize="19dp"
               android:textStyle="bold">
@@ -36,7 +35,6 @@
                     android:layout_margin="10dp"
                     android:id="@+id/tvAmount"
                     android:layout_height="wrap_content"
-                    android:text="Cash : AED 75"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:textColor="#000000"
@@ -49,7 +47,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mc Donalds Abut Dhabi Mall"
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:id="@+id/tvPickUp"
@@ -70,7 +67,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Deliver to Khalifa City"
                     android:layout_marginTop="15dp"
                     android:layout_marginLeft="10dp"
                     android:id="@+id/tvDrop"

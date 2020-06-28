@@ -76,7 +76,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     SessionData sessionData;
     static JobListResponse.Member jobResponse;
     static Gson gson;
-    TextView pickup, cashMode, amount, dropNotes, phone;
+    TextView pickup, cashMode, amount, dropNotes, phone, nameValue;
 
     public static ConfirmDeliveryFragment newInstance() {
         ConfirmDeliveryFragment fragment = new ConfirmDeliveryFragment();
@@ -157,6 +157,9 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
                 }
             }
         });
+
+        nameValue = (TextView)myview.findViewById(R.id.tvNameValue);
+        nameValue.setText(jobResponse.getN().getCustomerName());
 
         pickup = (TextView)myview.findViewById(R.id.tvName);
         pickup.setText(jobResponse.getN().getCustomerAddress());

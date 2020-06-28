@@ -64,7 +64,7 @@ public class AllTaskFragment extends Fragment {
     private CompositeDisposable mCompositeDisposable;
     APIInterface apiInterface;
     List<AllTaskResponseModel.Member> joblist;
-    TextView error, dateValue;
+    TextView error, dateValue, totalTask;
     SimpleDateFormat dateFormat;
 
     public static AllTaskFragment newInstance() {
@@ -114,6 +114,7 @@ public class AllTaskFragment extends Fragment {
         apiInterface = ApiUtils.getService();
         joblist = new ArrayList<>();
         error = (TextView)myview.findViewById(R.id.tvError);
+        totalTask = (TextView)myview.findViewById(R.id.tvTotalTask);
 
         Calendar cal = Calendar.getInstance();
         dateValue = (TextView)myview.findViewById(R.id.tvDate);
@@ -178,7 +179,9 @@ public class AllTaskFragment extends Fragment {
                 joblist.addAll(clientResponse.getData().getMember());
                 recyclerView.setAdapter(jobListAdapter);
                 jobListAdapter.notifyDataSetChanged();
+                totalTask.setText("Total task completed : "+joblist.size());
         }else{
+            totalTask.setText("Total task completed : 0");
             recyclerView.setAdapter(null);
             error.setVisibility(View.VISIBLE);
             error.setText(clientResponse.getMessage());

@@ -79,7 +79,9 @@
 
             <TextView
                 android:id="@+id/tvDropNotes"
-                android:textSize="16dp"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:textColor="#000000"
                 android:layout_width="match_parent"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
@@ -203,6 +205,34 @@
             </TextView>
 
         </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="Customer Name: "
+                    android:id="@+id/tvCusName"
+                    android:textSize="17dp"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textSize="17dp"
+                    android:layout_toRightOf="@+id/tvCusName"
+                    android:id="@+id/tvNameValue"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+            </RelativeLayout>
+
 
             <RelativeLayout
                 android:layout_width="match_parent"

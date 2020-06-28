@@ -3,6 +3,7 @@ package com.food.clicktofood.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 public class StatusPostingResponse {
+
     @SerializedName("data")
     @Expose
     private Data data;

@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.food.clicktofood.Model.AllTaskResponseModel;
+import com.food.clicktofood.Model.CashCollectionResponse;
 import com.food.clicktofood.R;
 
 import java.text.SimpleDateFormat;
@@ -24,13 +25,13 @@ import java.util.List;
 
 public class CashCollectionListAdapter extends RecyclerView.Adapter<CashCollectionListAdapter.ViewHolder> {
     Context context;
-    List<AllTaskResponseModel.Member> jobslist;
+    List<CashCollectionResponse.Member> jobslist;
     JobClicked jobClicked;
     //categoryProductClick categoryProductClick;
     private final String TAG = "berich_"+this.getClass().getSimpleName();
     SimpleDateFormat dateFormat;
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, pickUp, drop;
+        TextView title, pickUp, drop, amount;
         RelativeLayout fullView;
         ImageView imgCat;
         Context context;
@@ -42,9 +43,10 @@ public class CashCollectionListAdapter extends RecyclerView.Adapter<CashCollecti
             title = (TextView) view.findViewById(R.id.tvTitle);
             pickUp = (TextView) view.findViewById(R.id.tvPickUp);
             drop = (TextView) view.findViewById(R.id.tvDrop);
+            amount = (TextView) view.findViewById(R.id.tvAmount);
         }
     }
-    public CashCollectionListAdapter(Context context, List<AllTaskResponseModel.Member> colors, JobClicked jobClicked ) {  //categoryProductClick categoryProductClick
+    public CashCollectionListAdapter(Context context, List<CashCollectionResponse.Member> colors, JobClicked jobClicked ) {  //categoryProductClick categoryProductClick
         jobslist = colors;
         this.context = context;
         this.jobClicked = jobClicked;
@@ -53,8 +55,8 @@ public class CashCollectionListAdapter extends RecyclerView.Adapter<CashCollecti
     @Override
     public int getItemCount() {
 
-        //return jobslist.size();
-        return 3;
+        return jobslist.size();
+        //return 3;
     }
 
     @Override
@@ -75,8 +77,13 @@ public class CashCollectionListAdapter extends RecyclerView.Adapter<CashCollecti
                     jobClicked.jobClicked(position);
                 }
             });
-//            holder.pickUp.setText(jobslist.get(position).getPickupLocation());
-//            holder.title.setText(jobslist.get(position).getCategoryname()+"");
-//            holder.drop.setText(jobslist.get(position).getCustomerAddress());
+            holder.pickUp.setText(jobslist.get(position).getPickupLocation());
+            if(jobslist.get(position).getCategoryname()==null){
+                holder.title.setText("");
+            }else {
+                holder.title.setText(jobslist.get(position).getCategoryname() + "");
+            }
+            holder.drop.setText(jobslist.get(position).getCustomerAddress());
+            holder.amount.setText("Cash : AED "+String.format("%,.0f",jobslist.get(position).getTotalAmount()));
     }
 }

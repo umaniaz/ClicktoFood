@@ -11,6 +11,7 @@ package com.food.clicktofood.Retrofit;
 //import com.myapps.x.models.*;
 
 import com.food.clicktofood.Model.AllTaskResponseModel;
+import com.food.clicktofood.Model.CashCollectionResponse;
 import com.food.clicktofood.Model.DataUpdatePostModel;
 import com.food.clicktofood.Model.DutyStatus;
 import com.food.clicktofood.Model.ImageUploadResponse;
@@ -76,6 +77,13 @@ public interface APIInterface {
     @GET("GetCompletedTask") //LOGIN
     Observable<AllTaskResponseModel>getAllJobList(@Query("agentid") String agentID,
                                                   @Query("CreatedDate") String CreatedDate);
+
+    @GET("GetLoggedOut") //LOGOUT
+    Observable<StatusPostingResponse>postLogout(@Query("agentid") String agentID);
+
+    @GET("GetCashOn") //LOGOUT
+    Observable<CashCollectionResponse>getCashCollection(@Query("agentid") String agentID,
+                                                        @Query("CreatedDate") String CreatedDate);
 
 //    @FormUrlEncoded
 //    @POST("ncsapi.ashx?cmnd=_FEEDBACK_")

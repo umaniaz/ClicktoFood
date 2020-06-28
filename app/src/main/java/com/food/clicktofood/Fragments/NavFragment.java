@@ -25,6 +25,7 @@ import com.food.clicktofood.AfterLoginActivity;
 import com.food.clicktofood.MainActivity;
 import com.food.clicktofood.Model.DutyStatus;
 import com.food.clicktofood.Model.LoginResponse;
+import com.food.clicktofood.Model.StatusPostingResponse;
 import com.food.clicktofood.R;
 import com.food.clicktofood.Retrofit.APIInterface;
 import com.food.clicktofood.Retrofit.ApiUtils;
@@ -152,9 +153,7 @@ public class NavFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sessionData.clearPrefData();
-                startActivity(new Intent(getActivity(), MainActivity.class));
-                getActivity().finish();
+                postLogout();
             }
         });
 
@@ -255,6 +254,56 @@ public class NavFragment extends Fragment {
         dialog.dismiss();
         Log.d(TAG, "Error "+error);
         Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+    }
+
+    public void postLogout(){
+
+        if(isNetworkAvailable()){
+            dialog = ProgressDialog.show(getActivity(), "", "Logging out. Please wait.....", true);
+            mCompositeDisposable.add(apiInterface.postLogout(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()) //
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponseLogout, this::handleErrorLogout));
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //finish();
+                }
+            });
+            ad.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            ad.setMessage("Please check your internet connection and try again");
+            ad.show();
+        }
+    }
+
+
+    private void handleResponseLogout(StatusPostingResponse clientResponse) {
+        Log.d(TAG, "Login response "+clientResponse);
+        dialog.dismiss();
+        if(clientResponse.getIsSuccess()){
+            sessionResponse = sessionData.getUserDataModel();
+            sessionResponse.getData().getMember().get(0).setDutyStatus(0);
+            //sessionData.setUserDataModel(sessionResponse);
+            sessionData.clearPrefData();
+            startActivity(new Intent(getActivity(), MainActivity.class));
+            getActivity().finish();
+        }else{
+            Toast.makeText(getActivity(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void handleErrorLogout(Throwable error) {
+        dialog.dismiss();
+        Log.d(TAG, "Error "+error);
+        Toast.makeText(getActivity(), "Something went wrong, during logout", Toast.LENGTH_SHORT).show();
     }
 
     private boolean isNetworkAvailable(){
