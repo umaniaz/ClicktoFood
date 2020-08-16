@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import android.widget.Toast;
 
 import com.food.clicktofood.Adapter.CustomMapView;
 import com.food.clicktofood.Adapter.ServiceStart;
+import com.food.clicktofood.AfterLoginActivity;
+import com.food.clicktofood.Model.JobCompleteResponse;
 import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.StatusPostingResponse;
 import com.food.clicktofood.R;
@@ -59,7 +62,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 23;
-
+    private final String TAG = "ctf_"+this.getClass().getSimpleName();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -223,7 +226,16 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getN().getTaskID(), status) //
+            Double lat = AfterLoginActivity.getLat();
+            Double lon = AfterLoginActivity.getLon();
+            Log.d(TAG, "Lat "+lat+" lon "+lon);
+            if(lat==null){
+                lat = 0.0;
+            }
+            if (lon==null){
+                lon = 0.0;
+            }
+            mCompositeDisposable.add(apiInterface.postFinalStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getN().getTaskID(), status, lat, lon) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -233,7 +245,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     }
 
 
-    private void handleResponsePromo(StatusPostingResponse clientResponse) {
+    private void handleResponsePromo(JobCompleteResponse clientResponse) {
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             serviceStart.clickService("Stop");
@@ -342,6 +354,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
 
         Double latitude = jobResponse.getN().getDropLatitude();
         Double longitude = jobResponse.getN().getDropLongitude();
+        Log.d(TAG, "Lat "+latitude+" Lon "+longitude);
         if(latitude == null || longitude == null){
             LatLng latLng = new LatLng(0.0, 0.0);
             Marker marker = mMap.addMarker(new MarkerOptions().title("Invalid coordinates").position(latLng));

@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.food.clicktofood.Adapter.LocationTrackerEnabled;
 import com.food.clicktofood.Adapter.ServiceStart;
+import com.food.clicktofood.Fragments.ConfirmOrderFragment;
 import com.food.clicktofood.Fragments.ConfirmRequestFragment;
 import com.food.clicktofood.Fragments.JobListFragment;
 import com.food.clicktofood.Fragments.MyProfileFragment;
@@ -83,7 +84,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
     String latitude, longitude;
     int PERMISSION_ID = 44;
     FusedLocationProviderClient mFusedLocationClient;
-    Double lat, lon;
+    public static Double lat, lon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,16 +182,16 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                     .commit();
         }
 
-//        if (getSupportFragmentManager().findFragmentByTag("ConfirmRequestFragment") != null) {
+//        if (getSupportFragmentManager().findFragmentByTag("ConfirmOrderFragment") != null) {
 //            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //            getSupportFragmentManager()
 //                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+//                    .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(), "ConfirmOrderFragment")
 //                    .commit();
 //        } else {
 //            getSupportFragmentManager()
 //                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new MyProfileFragment().newInstance(), "MyProfileFragment")
+    //                    .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(), "ConfirmOrderFragment")
 //                    .commit();
 //        }
     }
@@ -225,6 +226,14 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
     private void handleErrorPromo(Throwable error) {
         //dialog.dismiss();
         Toast.makeText(getApplicationContext(), "Something went wrong, in updating location", Toast.LENGTH_SHORT).show();
+    }
+
+    public static Double getLat(){
+        return lat;
+    }
+
+    public static Double getLon(){
+        return lon;
     }
 
     private boolean isNetworkAvailable(){
@@ -363,6 +372,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                             public void onComplete(@NonNull Task<Location> task) {
                                 Location location = task.getResult();
                                 if (location == null) {
+                                    Log.d("Azad", "inside if");
                                     requestNewLocationData();
                                 } else {
                                     lat = location.getLatitude();
@@ -399,6 +409,7 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
             // Extract data included in the Intent
             String message = intent.getStringExtra("locationTrack");
             //Toast.makeText(getApplicationContext(), "Message "+message, Toast.LENGTH_LONG).show();
+            Log.d(TAG, "On receive "+message);
             if(message.equals("off")){
                // Toast.makeText(getApplicationContext(), "OFf in afterlogin ", Toast.LENGTH_LONG).show();
                 LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMessageReceiver);

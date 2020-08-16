@@ -16,18 +16,22 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.food.clicktofood.Adapter.CustomMapView;
 import com.food.clicktofood.Adapter.ServiceStart;
 import com.food.clicktofood.Model.JobListResponse;
+import com.food.clicktofood.Model.OTPResponse;
 import com.food.clicktofood.Model.StatusPostingResponse;
+import com.food.clicktofood.Model.WaitingResponse;
 import com.food.clicktofood.R;
 import com.food.clicktofood.Retrofit.APIInterface;
 import com.food.clicktofood.Retrofit.ApiUtils;
@@ -59,6 +63,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS=23;
+    private final String TAG = "ctf_"+this.getClass().getSimpleName();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -67,7 +72,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
     //MapView mapView;
     CustomMapView mapView;
     View myview;
-    Button accept, reject;
+    Button accept, reject, waiting;
     ServiceStart serviceStart;
     ProgressDialog dialog;
     private CompositeDisposable mCompositeDisposable;
@@ -75,7 +80,9 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
     SessionData sessionData;
     static JobListResponse.Member jobResponse;
     static Gson gson;
-    TextView pickup, cashMode, amount, pickUpNotes, phone;
+    TextView pickup, cashMode, amount, pickUpNotes, phone, taskId, ok, cancel;
+    AlertDialog alertDialogAndroid;
+    EditText otp;
 
     public static ConfirmOrderFragment newInstance() {
         ConfirmOrderFragment fragment = new ConfirmOrderFragment();
@@ -119,8 +126,8 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         //mapView = (MapView) myview.findViewById(R.id.mapview);
         mapView = (CustomMapView)myview.findViewById(R.id.mapview);
 
-        serviceStart = (ServiceStart) getActivity();
-
+//        serviceStart = (ServiceStart) getActivity();
+//
         sessionData = new SessionData(getActivity());
         mCompositeDisposable = new CompositeDisposable();
         apiInterface = ApiUtils.getService();
@@ -130,6 +137,8 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         pickup = (TextView)myview.findViewById(R.id.tvName);
         pickup.setText(jobResponse.getN().getPickupLocation());
         pickUpNotes = (TextView)myview.findViewById(R.id.tvPickupNotes);
+        taskId = (TextView)myview.findViewById(R.id.tvTaskID);
+        taskId.setText(jobResponse.getN().getTaskID());
 
         if(jobResponse.getN().getPickupNotes()==null) {
             pickUpNotes.setText(" ");
@@ -171,24 +180,60 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
             public void onClick(View view) {
                 //serviceStart.clickService("Start");
 
-                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
-                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+//                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        sentStatus(2);
+//                    }
+//                });
+//                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                    }
+//                });
+//                ad.setTitle("Confirmation");
+//                ad.setMessage("Are you sure to confirm pickup?");
+//                ad.setCancelable(false);
+//                ad.show();
+
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());
+                View mView = layoutInflaterAndroid.inflate(R.layout.custom_pop_up, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity());
+                alertDialogBuilderUserInput.setView(mView);
+                alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogBuilderUserInput
+                        .setCancelable(false);
+                alertDialogAndroid.setCancelable(false);
+
+                otp = (EditText)mView.findViewById(R.id.etOTP);
+
+                ok = (TextView)mView.findViewById(R.id.tvOk);
+                ok.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        sentStatus(2);
+                    public void onClick(View view) {
+                        // check and call api
+                        if(TextUtils.isEmpty(otp.getText().toString().trim())){
+                            otp.setError("Please enter OTP");
+                        }else{
+                           // postResetPassword(edId.getText().toString().trim());
+                            verifyOTP();
+                        }
                     }
                 });
-                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
 
+                cancel = (TextView)mView.findViewById(R.id.cancel);
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialogAndroid.dismiss();
                     }
                 });
-                ad.setTitle("Confirmation");
-                ad.setMessage("Are you sure to confirm pickup?");
-                ad.setCancelable(false);
-                ad.show();
 
+                //tvMessageShow = (TextView)mView.findViewById(R.id.tvMessageShow);
+
+                alertDialogAndroid.show();
 
             }
         });
@@ -200,6 +245,32 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
                 //serviceStart.clickService("Stop");
             }
         });
+
+        waiting = (Button)myview.findViewById(R.id.btnWaiting);
+        waiting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //serviceStart.clickService("Stop");
+                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startWaiting();
+                    }
+                });
+                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.setTitle("Confirmation");
+                ad.setMessage("Are you sure to start waiting?");
+                ad.setCancelable(false);
+                ad.show();
+            }
+        });
+
         mapView.onCreate(savedInstanceState);
         checkPermission();
         return myview;
@@ -257,6 +328,103 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         dialog.dismiss();
         Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
     }
+
+    public void startWaiting(){
+        dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
+        if(isNetworkAvailable()){
+            //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
+            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), "T20154") //jobResponse.getN().getTaskID()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponseWaiting, this::handleErrorWaiting));
+        }else{
+            Toast.makeText(getActivity(), "Please check your internet connection and try again", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    private void handleResponseWaiting(WaitingResponse clientResponse) {
+        dialog.dismiss();
+        Log.d("Sohan","Response "+clientResponse);
+        if(clientResponse.getIsSuccess()){
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    waiting.setVisibility(View.GONE);
+                    accept.setVisibility(View.VISIBLE);
+                }
+            });
+
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
+        }
+
+    }
+
+    private void handleErrorWaiting(Throwable error) {
+        dialog.dismiss();
+        Log.d("Sohan","Error "+error);
+        Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+    }
+
+    public void verifyOTP(){
+        dialog = ProgressDialog.show(getActivity(), "", "Verifying OTP. Please wait.....", true);
+        if(isNetworkAvailable()){
+            //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
+            Log.d(TAG, "Id"+sessionData.getUserDataModel().getData().getMember().get(0).getEmpID()+" task id "+jobResponse.getN().getTaskID()+" otp "+otp.getText().toString());
+            mCompositeDisposable.add(apiInterface.verifyOTP(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getN().getTaskID(), otp.getText().toString()) //
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResponseotp, this::handleErrorotp));
+        }else{
+            Toast.makeText(getActivity(), "Please check your internet connection and try again", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    private void handleResponseotp(OTPResponse clientResponse) {
+        dialog.dismiss();
+        Log.d(TAG, "Job Request response "+clientResponse);
+        if(clientResponse.getIsSuccess()){
+            alertDialogAndroid.dismiss();
+            sentStatus(2);
+            //Toast.makeText(getActivity(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
+        }else{
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            ad.setMessage(clientResponse.getMessage());
+            ad.setCancelable(false);
+            ad.show();
+        }
+
+    }
+
+    private void handleErrorotp(Throwable error) {
+        dialog.dismiss();
+        Log.d(TAG, "Error in sent status "+error);
+        Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
+    }
+
 
     private boolean isNetworkAvailable(){
 
@@ -326,7 +494,11 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         //email='sohailjoy63@gmail.com', phoneNo='0569528818'
 
         Double latitude = jobResponse.getO().getLatitude();
+        //Double latitude = null;
         Double longitude = jobResponse.getO().getLongitude();
+        //Double longitude = null;
+
+
         if(latitude == null || longitude == null){
             LatLng latLng = new LatLng(0.0, 0.0);
             Marker marker = mMap.addMarker(new MarkerOptions().title("Invalid coordinates").position(latLng));

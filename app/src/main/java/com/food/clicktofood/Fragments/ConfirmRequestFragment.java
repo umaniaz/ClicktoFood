@@ -30,6 +30,7 @@ import com.food.clicktofood.AfterLoginActivity;
 import com.food.clicktofood.Model.DutyStatus;
 import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.LoginResponse;
+import com.food.clicktofood.Model.OTPResponse;
 import com.food.clicktofood.Model.StatusPostingResponse;
 import com.food.clicktofood.MyService;
 import com.food.clicktofood.R;

@@ -12,7 +12,9 @@ public class ApiUtils {
     //public static final String BASE_URL = "http://3.134.89.59:8083/api/Agents/";
     //public static final String BASE_URL = "http://18.220.161.232:8083/api/Agents/";
 
-    public static final String BASE_URL = "http://18.222.191.88:8083/api/Agents/";  // new production server
+    //public static final String BASE_URL = "http://18.222.191.88:8083/api/Agents/";  // new production server
+    //public static final String BASE_URL = "http://3.22.233.47:8089/api/Agents/";  // new testing server old
+    public static final String BASE_URL = "http://3.14.12.76:8089/api/Agents/";  // new testing server new
 
 
 

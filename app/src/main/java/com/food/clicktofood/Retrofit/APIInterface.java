@@ -15,10 +15,13 @@ import com.food.clicktofood.Model.CashCollectionResponse;
 import com.food.clicktofood.Model.DataUpdatePostModel;
 import com.food.clicktofood.Model.DutyStatus;
 import com.food.clicktofood.Model.ImageUploadResponse;
+import com.food.clicktofood.Model.JobCompleteResponse;
 import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.LocationResponse;
 import com.food.clicktofood.Model.LoginResponse;
+import com.food.clicktofood.Model.OTPResponse;
 import com.food.clicktofood.Model.StatusPostingResponse;
+import com.food.clicktofood.Model.WaitingResponse;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
@@ -84,6 +87,22 @@ public interface APIInterface {
     @GET("GetCashOn") //LOGOUT
     Observable<CashCollectionResponse>getCashCollection(@Query("agentid") String agentID,
                                                         @Query("CreatedDate") String CreatedDate);
+
+    @GET("GetWaitingTime") //LOGIN
+    Observable<WaitingResponse>postStatus(@Query("agentid") String agentID,
+                                          @Query("taskid") String taskId);
+
+    @GET("GetOtpMatch") //LOGIN
+    Observable<OTPResponse>verifyOTP(@Query("agentid") String agentid,
+                                      @Query("taskid") String taskid,
+                                      @Query("otp") String otp);
+
+    @GET("GetCompleteTask") //LOGIN
+    Observable<JobCompleteResponse>postFinalStatus(@Query("agentid") String agentID,
+                                              @Query("taskid") String firtaskidebaseToken,
+                                              @Query("status") Integer status,
+                                                   @Query("lat") Double lat,
+                                                   @Query("lon") Double lon);
 
 //    @FormUrlEncoded
 //    @POST("ncsapi.ashx?cmnd=_FEEDBACK_")

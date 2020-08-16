@@ -176,6 +176,36 @@
             android:layout_marginRight="20dp"
             android:background="#000000"></View>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:text="Task Id"
+                    android:textSize="17dp"
+                    android:id="@+id/tvTaskId"
+                    android:layout_toLeftOf="@+id/tvTaskID"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="AED 66.00"
+                    android:textSize="17dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/tvTaskID"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+            </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -244,6 +274,18 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btnWaiting"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:background="@drawable/btn_waiting"
+                android:textColor="#ffffff"
+                android:text="WAITING" />
+
+            <Button
                 android:id="@+id/btnAccept"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -251,6 +293,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
+                android:visibility="gone"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/btn_accept"
                 android:textColor="#ffffff"

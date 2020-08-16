@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,7 +56,7 @@ public class NavFragment extends Fragment {
 
     View myview;
     Switch onOffSwitch;
-    TextView profileEdit, logout, allTask, cashCollections;
+    TextView profileEdit, logout, allTask, cashCollections, homepage;
     SessionData sessionData;
     ImageView imgCat;
     ProgressDialog dialog;
@@ -136,6 +137,26 @@ public class NavFragment extends Fragment {
             }
         });
 
+        homepage = (TextView)myview.findViewById(R.id.tvHome);
+        homepage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AfterLoginActivity.getInstance().setDrawerOnClick();
+                if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
+                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                } else {
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
+                            .commit();
+                }
+            }
+        });
+
         cashCollections = (TextView)myview.findViewById(R.id.tvCashCollection);
         cashCollections.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +195,12 @@ public class NavFragment extends Fragment {
         }else{
             onOffSwitch.setChecked(false);
         }
+
+//        if(sessionData.getUserDataModel().getData().getMember().get(0).getDutyStatus()==0){
+//            onOffSwitch.setChecked(false);
+//        }else{
+//            onOffSwitch.setChecked(true);
+//        }
 
         onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

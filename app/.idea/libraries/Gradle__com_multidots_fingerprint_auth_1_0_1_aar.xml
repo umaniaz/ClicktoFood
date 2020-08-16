@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.multidots:fingerprint-auth:1.0.1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9ecd41c2944c788fc96eabbd7c122b52/jetified-fingerprint-auth-1.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9ecd41c2944c788fc96eabbd7c122b52/jetified-fingerprint-auth-1.0.1/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.multidots/fingerprint-auth/1.0.1/227bd6b915d245bcf835d2843aec444b3124605/fingerprint-auth-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
