@@ -180,11 +180,47 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
             public void onClick(View view) {
                 //serviceStart.clickService("Start");
 
+                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        sentStatus(2);
+                    }
+                });
+                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.setTitle("Confirmation");
+                ad.setMessage("Are you sure to confirm pickup?");
+                ad.setCancelable(false);
+                ad.show();
+
+
+
+            }
+        });
+
+        reject = (Button)myview.findViewById(R.id.btnReject);
+        reject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //serviceStart.clickService("Stop");
+            }
+        });
+
+        waiting = (Button)myview.findViewById(R.id.btnWaiting);
+        waiting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                //serviceStart.clickService("Stop");
 //                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
 //                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 //                    @Override
 //                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        sentStatus(2);
+//                        startWaiting();
 //                    }
 //                });
 //                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -194,7 +230,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
 //                    }
 //                });
 //                ad.setTitle("Confirmation");
-//                ad.setMessage("Are you sure to confirm pickup?");
+//                ad.setMessage("Are you sure to start waiting?");
 //                ad.setCancelable(false);
 //                ad.show();
 
@@ -217,7 +253,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
                         if(TextUtils.isEmpty(otp.getText().toString().trim())){
                             otp.setError("Please enter OTP");
                         }else{
-                           // postResetPassword(edId.getText().toString().trim());
+                            // postResetPassword(edId.getText().toString().trim());
                             verifyOTP();
                         }
                     }
@@ -234,40 +270,6 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
                 //tvMessageShow = (TextView)mView.findViewById(R.id.tvMessageShow);
 
                 alertDialogAndroid.show();
-
-            }
-        });
-
-        reject = (Button)myview.findViewById(R.id.btnReject);
-        reject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //serviceStart.clickService("Stop");
-            }
-        });
-
-        waiting = (Button)myview.findViewById(R.id.btnWaiting);
-        waiting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //serviceStart.clickService("Stop");
-                AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
-                ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        startWaiting();
-                    }
-                });
-                ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-                ad.setTitle("Confirmation");
-                ad.setMessage("Are you sure to start waiting?");
-                ad.setCancelable(false);
-                ad.show();
             }
         });
 
@@ -333,7 +335,7 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         dialog = ProgressDialog.show(getActivity(), "", "Data posting. Please wait.....", true);
         if(isNetworkAvailable()){
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
-            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), "T20154") //jobResponse.getN().getTaskID()
+            mCompositeDisposable.add(apiInterface.postStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getN().getTaskID()) //jobResponse.getN().getTaskID()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponseWaiting, this::handleErrorWaiting));
@@ -401,7 +403,8 @@ public class ConfirmOrderFragment extends Fragment implements OnMapReadyCallback
         Log.d(TAG, "Job Request response "+clientResponse);
         if(clientResponse.getIsSuccess()){
             alertDialogAndroid.dismiss();
-            sentStatus(2);
+            //sentStatus(2);
+            startWaiting();
             //Toast.makeText(getActivity(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }else{
             AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());

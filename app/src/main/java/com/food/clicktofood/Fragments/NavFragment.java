@@ -190,17 +190,17 @@ public class NavFragment extends Fragment {
 
         //Log.d(TAG, "duty status in session "+sessionData.getUserDataModel().getData().getMember().get(0).getDutyStatus());
         onOffSwitch = (Switch)myview.findViewById(R.id.on_off_switch);
-        if(sessionData.getUserDataModel().getData().getMember().get(0).getDutyStatus()==1){
-            onOffSwitch.setChecked(true);
-        }else{
-            onOffSwitch.setChecked(false);
-        }
-
-//        if(sessionData.getUserDataModel().getData().getMember().get(0).getDutyStatus()==0){
-//            onOffSwitch.setChecked(false);
-//        }else{
+//        if(sessionData.getUserDataModel().getData().getMember().get(0).getDutyStatus()==1){
 //            onOffSwitch.setChecked(true);
+//        }else{
+//            onOffSwitch.setChecked(false);
 //        }
+
+        if(sessionData.getUserDataModel().getData().getMember().get(0).getDutyStatus()==0){
+            onOffSwitch.setChecked(false);
+        }else{
+            onOffSwitch.setChecked(true);
+        }
 
         onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
