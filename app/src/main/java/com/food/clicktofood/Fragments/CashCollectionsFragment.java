@@ -183,7 +183,7 @@ public class CashCollectionsFragment extends Fragment {
             for(int i=0; i<cashList.size(); i++){
                 value += cashList.get(i).getTotalAmount();
             }
-            totalAmount.setText("Total Cash Collected : AED "+ String.format("%,.0f",value));
+            totalAmount.setText("Total Cash Collected : AED "+ String.format("%,.2f",value));
         }else{
             totalTask.setText("Total Cash Deliveries : 0");
             totalAmount.setText("Total Cash Collected : AED 0");

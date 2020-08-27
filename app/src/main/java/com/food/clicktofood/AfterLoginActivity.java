@@ -43,6 +43,7 @@ import com.food.clicktofood.Fragments.JobListFragment;
 import com.food.clicktofood.Fragments.MyProfileFragment;
 import com.food.clicktofood.Fragments.NavFragment;
 import com.food.clicktofood.Fragments.NavigationClickListener;
+import com.food.clicktofood.Fragments.NewJobListFragmentTab;
 import com.food.clicktofood.Model.JobListResponse;
 import com.food.clicktofood.Model.LocationResponse;
 import com.food.clicktofood.Model.LoginResponse;
@@ -169,31 +170,31 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
                     .commit();
         }
 
-        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                    .commit();
-        } else {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                    .commit();
-        }
-
-//        if (getSupportFragmentManager().findFragmentByTag("ConfirmOrderFragment") != null) {
+//        if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
 //            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //            getSupportFragmentManager()
 //                    .beginTransaction()
-//                    .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(), "ConfirmOrderFragment")
+//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
 //                    .commit();
 //        } else {
 //            getSupportFragmentManager()
 //                    .beginTransaction()
-    //                    .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(), "ConfirmOrderFragment")
+//                    .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
 //                    .commit();
 //        }
+
+        if (getSupportFragmentManager().findFragmentByTag("NewJobListFragmentTab") != null) {
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                        .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+                    .commit();
+        }
     }
 
 
