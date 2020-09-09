@@ -193,27 +193,27 @@ public class JobListFragment extends Fragment {
         Log.d(TAG, "Joblist response "+clientResponse);
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
-            if(clientResponse.getData().getCurrentStatus()==1){
-                String model = gson.toJson(clientResponse.getData().getAssigned());
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(model), "ConfirmOrderFragment")
-                        .commit();
-            }else if(clientResponse.getData().getCurrentStatus()==2){
-                String model = gson.toJson(clientResponse.getData().getAssigned());
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(model), "ConfirmDeliveryFragment")
-                        .commit();
-            }else {
+//            if(clientResponse.getData().getCurrentStatus()==1){
+//                String model = gson.toJson(clientResponse.getData().getAssigned());
+//                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                getFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.fragmentHolder, new ConfirmOrderFragment().newInstance(model), "ConfirmOrderFragment")
+//                        .commit();
+//            }else if(clientResponse.getData().getCurrentStatus()==2){
+//                String model = gson.toJson(clientResponse.getData().getAssigned());
+//                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                getFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.fragmentHolder, new ConfirmDeliveryFragment().newInstance(model), "ConfirmDeliveryFragment")
+//                        .commit();
+//            }else {
                 error.setVisibility(View.GONE);
                 joblist.clear();
                 joblist.addAll(clientResponse.getData().getMember());
                 recyclerView.setAdapter(jobListAdapter);
                 jobListAdapter.notifyDataSetChanged();
-            }
+            //}
         }else{
             recyclerView.setAdapter(null);
             error.setVisibility(View.VISIBLE);

@@ -9,9 +9,10 @@ import android.content.Context;
 public class ApiUtils {
     private static Context mContext;
 
-    public static final String BASE_URL = "http://18.222.191.88:8083/api/Agents/";  // new production server
-    //public static final String BASE_URL = "http://3.22.233.47:8089/api/Agents/";  // new testing server old
-    //public static final String BASE_URL = "http://3.14.12.76:8089/api/Agents/";  // new testing server new
+    //public static final String BASE_URL = "http://18.222.191.88:8083/api/Agents/";  // new production server
+    //public static final String BASE_URL = "http://3.22.233.47:8089/api/Agents/";  // new testing server old 1
+    //public static final String BASE_URL = "http://3.14.12.76:8089/api/Agents/";  // new testing server old 2
+    public static final String BASE_URL = "http://3.129.17.252:8089/api/Agents/";  // new testing server new
 
 
 

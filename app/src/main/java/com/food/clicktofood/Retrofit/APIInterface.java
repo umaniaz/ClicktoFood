@@ -10,6 +10,7 @@ package com.food.clicktofood.Retrofit;
 
 //import com.myapps.x.models.*;
 
+import com.food.clicktofood.Model.AcceptedTaskListResponse;
 import com.food.clicktofood.Model.AllTaskResponseModel;
 import com.food.clicktofood.Model.CashCollectionResponse;
 import com.food.clicktofood.Model.DataUpdatePostModel;
@@ -51,6 +52,9 @@ public interface APIInterface {
 
     @GET("GetTaskListV1") //LOGIN    // V1 for real data
     Observable<JobListResponse>getJobListNew(@Query("agentID") String agentID);
+
+    @GET("GetNewTaskListV1") //new accepted task    // V1 for real data
+    Observable<AcceptedTaskListResponse>getAcceptedJobListNew(@Query("agentID") String agentID);
 
 //    @GET("GetTaskListV2") //LOGIN
 //    Observable<JobListResponse>getJobListNew(@Query("agentID") String agentID);

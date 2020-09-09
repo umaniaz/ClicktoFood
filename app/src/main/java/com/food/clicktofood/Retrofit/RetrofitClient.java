@@ -28,8 +28,8 @@ public class RetrofitClient {
         /* This line is where we add the interceptor to the retrofit service  */
         //httpClient.addInterceptor(new NetworkInterceptor(context));
         httpClient.addInterceptor(logging);
-        httpClient.connectTimeout(60, TimeUnit.SECONDS);
-        httpClient.readTimeout(60, TimeUnit.SECONDS);
+        httpClient.connectTimeout(160, TimeUnit.SECONDS);
+        httpClient.readTimeout(160, TimeUnit.SECONDS);
 
         if (retrofit==null) {
             retrofit = new Retrofit.Builder()

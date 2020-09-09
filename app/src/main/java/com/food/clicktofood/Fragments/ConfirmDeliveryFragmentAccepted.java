@@ -11,12 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,19 +19,23 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.food.clicktofood.Adapter.CustomMapView;
 import com.food.clicktofood.Adapter.ServiceStart;
 import com.food.clicktofood.AfterLoginActivity;
+import com.food.clicktofood.Model.AcceptedTaskListResponse;
 import com.food.clicktofood.Model.JobCompleteResponse;
 import com.food.clicktofood.Model.JobListResponse;
-import com.food.clicktofood.Model.StatusPostingResponse;
 import com.food.clicktofood.R;
 import com.food.clicktofood.Retrofit.APIInterface;
 import com.food.clicktofood.Retrofit.ApiUtils;
 import com.food.clicktofood.SessionData.SessionData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -53,10 +51,10 @@ import static android.Manifest.permission.CALL_PHONE;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ConfirmDeliveryFragment#newInstance} factory method to
+ * Use the {@link ConfirmDeliveryFragmentAccepted#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallback {
+public class ConfirmDeliveryFragmentAccepted extends Fragment implements OnMapReadyCallback {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -77,16 +75,16 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     private CompositeDisposable mCompositeDisposable;
     APIInterface apiInterface;
     SessionData sessionData;
-    static JobListResponse.Member jobResponse;
+    static AcceptedTaskListResponse.Assigned jobResponse;
     static Gson gson;
     TextView pickup, cashMode, amount, dropNotes, phone, nameValue;
 
-    public static ConfirmDeliveryFragment newInstance() {
-        ConfirmDeliveryFragment fragment = new ConfirmDeliveryFragment();
+    public static ConfirmDeliveryFragmentAccepted newInstance() {
+        ConfirmDeliveryFragmentAccepted fragment = new ConfirmDeliveryFragmentAccepted();
         return fragment;
     }
 
-    public ConfirmDeliveryFragment() {
+    public ConfirmDeliveryFragmentAccepted() {
         // Required empty public constructor
     }
 
@@ -98,8 +96,8 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
      * @return A new instance of fragment ConfirmDeliveryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ConfirmDeliveryFragment newInstance(String param1) {
-        ConfirmDeliveryFragment fragment = new ConfirmDeliveryFragment();
+    public static ConfirmDeliveryFragmentAccepted newInstance(String param1) {
+        ConfirmDeliveryFragmentAccepted fragment = new ConfirmDeliveryFragmentAccepted();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
@@ -119,7 +117,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        myview = inflater.inflate(R.layout.fragment_confirm_delivery, container, false);
+        myview = inflater.inflate(R.layout.fragment_confirm_delivery_accepted, container, false);
         //mapView = (MapView) myview.findViewById(R.id.mapview);
         mapView = (CustomMapView) myview.findViewById(R.id.mapview);
 
@@ -128,30 +126,30 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         mCompositeDisposable = new CompositeDisposable();
         apiInterface = ApiUtils.getService();
         gson = new Gson();
-        jobResponse = gson.fromJson(mParam1, JobListResponse.Member.class);
+        jobResponse = gson.fromJson(mParam1, AcceptedTaskListResponse.Assigned.class);
 
         dropNotes = (TextView) myview.findViewById(R.id.tvDropNotes);
 
-        if (jobResponse.getN().getDropNotes() == null) {
+        if (jobResponse.getTask().getDropNotes() == null) {
             dropNotes.setText(" ");
         } else {
-            dropNotes.setText(jobResponse.getN().getDropNotes() + "");
+            dropNotes.setText(jobResponse.getTask().getDropNotes() + "");
         }
 
         phone = (TextView) myview.findViewById(R.id.tvCell);
-        if (jobResponse.getN().getCustomerPhone() == null) {
+        if (jobResponse.getTask().getCustomerPhone() == null) {
             phone.setText("");
         } else {
-            phone.setText(jobResponse.getN().getCustomerPhone());
+            phone.setText(jobResponse.getTask().getCustomerPhone());
         }
         phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (jobResponse.getN().getCustomerPhone() == null) {
+                if (jobResponse.getTask().getCustomerPhone() == null) {
                     Toast.makeText(getActivity(), "No phone number ", Toast.LENGTH_LONG).show();
                 } else {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + jobResponse.getN().getCustomerPhone()));
+                    callIntent.setData(Uri.parse("tel:" + jobResponse.getTask().getCustomerPhone()));
                     if (ContextCompat.checkSelfPermission(getActivity(), CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                         startActivity(callIntent);
                     } else {
@@ -162,14 +160,14 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         });
 
         nameValue = (TextView)myview.findViewById(R.id.tvNameValue);
-        nameValue.setText(jobResponse.getN().getCustomerName());
+        nameValue.setText(jobResponse.getTask().getCustomerName());
 
         pickup = (TextView)myview.findViewById(R.id.tvName);
-        pickup.setText(jobResponse.getN().getCustomerAddress());
+        pickup.setText(jobResponse.getTask().getCustomerAddress());
         cashMode = (TextView)myview.findViewById(R.id.tvPaymentType);
-        cashMode.setText(jobResponse.getN().getPaymentMode());
+        cashMode.setText(jobResponse.getTask().getPaymentMode());
         amount = (TextView)myview.findViewById(R.id.tvTotalValue);
-        amount.setText(String.format("%,.2f", jobResponse.getN().getTotalAmount()));
+        amount.setText(String.format("%,.2f", jobResponse.getTask().getTotalAmount()));
 
         accept = (Button)myview.findViewById(R.id.btnAccept);
         accept.setOnClickListener(new View.OnClickListener() {
@@ -209,10 +207,10 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
     }
 
     private void checkPermission(){
-        if ( ContextCompat.checkSelfPermission( getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION )
+        if ( ContextCompat.checkSelfPermission( getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION )
                 != PackageManager.PERMISSION_GRANTED ) {
 
-            ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
+            ActivityCompat.requestPermissions( getActivity(), new String[] {  Manifest.permission.ACCESS_COARSE_LOCATION  },
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS );
         }
         else{
@@ -235,7 +233,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
             if (lon==null){
                 lon = 0.0;
             }
-            mCompositeDisposable.add(apiInterface.postFinalStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getN().getTaskID(), status, lat, lon) //
+            mCompositeDisposable.add(apiInterface.postFinalStatus(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), jobResponse.getTask().getTaskID(), status, lat, lon) //
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::handleResponsePromo, this::handleErrorPromo));
@@ -256,7 +254,6 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
                 public void onClick(DialogInterface dialogInterface, int i) {
                     getActivity().finish();
                     startActivity(new Intent(getActivity(), AfterLoginActivity.class));
-
 //                    if (getFragmentManager().findFragmentByTag("JoblistFragment") != null || getFragmentManager().findFragmentByTag("ConfirmOrderFragment") != null) {
 //                        getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        getFragmentManager()
@@ -309,8 +306,8 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
         NetworkInfo netinfo = cm.getActiveNetworkInfo();
 
         if (netinfo != null && netinfo.isConnectedOrConnecting()) {
-            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
             if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
             else return false;
@@ -355,8 +352,8 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
 //        Marker marker = mMap.addMarker(new MarkerOptions().title("Home").position(latLng));
 
 
-        Double latitude = jobResponse.getN().getDropLatitude();
-        Double longitude = jobResponse.getN().getDropLongitude();
+        Double latitude = jobResponse.getTask().getDropLatitude();
+        Double longitude = jobResponse.getTask().getDropLongitude();
         Log.d(TAG, "Lat "+latitude+" Lon "+longitude);
         if(latitude == null || longitude == null){
             LatLng latLng = new LatLng(0.0, 0.0);
@@ -365,7 +362,7 @@ public class ConfirmDeliveryFragment extends Fragment implements OnMapReadyCallb
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
         }else {
             LatLng latLng = new LatLng(latitude, longitude);
-            Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getN().getCustomerAddress()).position(latLng));
+            Marker marker = mMap.addMarker(new MarkerOptions().title(jobResponse.getTask().getCustomerAddress()).position(latLng));
             marker.showInfoWindow();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
         }

@@ -145,18 +145,22 @@ public class AfterLoginActivity extends AppCompatActivity implements NavigationC
             @SuppressLint("WrongConstant")
             @Override
             public void onClick(View view) {
-                if (getSupportFragmentManager().findFragmentByTag("JobListFragment") != null) {
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                } else {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                }
+                finish();
+                startActivity(new Intent(getApplicationContext(), AfterLoginActivity.class));
+                //finish();
+
+//                if (getSupportFragmentManager().findFragmentByTag("NewJobListFragmentTab") != null) {
+//                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                    getSupportFragmentManager()
+//                            .beginTransaction()
+//                            .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                            .commit();
+//                } else {
+//                    getSupportFragmentManager()
+//                            .beginTransaction()
+//                            .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                            .commit();
+//                }
             }
         });
 
