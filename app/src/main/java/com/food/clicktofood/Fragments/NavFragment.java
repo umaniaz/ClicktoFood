@@ -142,18 +142,21 @@ public class NavFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 AfterLoginActivity.getInstance().setDrawerOnClick();
-                if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                } else {
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                }
+//                if (getFragmentManager().findFragmentByTag("NewJobListFragmentTab") != null) {
+//                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                    getFragmentManager()
+//                            .beginTransaction()
+//                            .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                            .commit();
+//                } else {
+//                    getFragmentManager()
+//                            .beginTransaction()
+//                            .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                            .commit();
+//                }
+
+                getActivity().finish();
+                startActivity(new Intent(getActivity(), AfterLoginActivity.class));
             }
         });
 
@@ -253,10 +256,11 @@ public class NavFragment extends Fragment {
             sessionResponse.getData().getMember().get(0).setDutyStatus(clientResponse.getData().getMember().get(0).getDutyStatus());
             sessionData.setUserDataModel(sessionResponse);
             AfterLoginActivity.getInstance().setDrawerOnClick();
-            AfterLoginActivity.getInstance().setUI();
-            //startActivity(new Intent(getActivity(), AfterLoginActivity.class));
-            //getActivity().finish();
+            //AfterLoginActivity.getInstance().setUI();
 
+            //startActivity(new Intent(getActivity(), AfterLoginActivity.class));
+            getActivity().finish();
+            startActivity(new Intent(getActivity(), AfterLoginActivity.class));
             //sessionData.getUserDataModel().getData().getMember().get(0).setDutyStatus(clientResponse.getData().getMember().get(0).getDutyStatus());
 //            if(clientResponse.getData().getMember().get(0).getDutyStatus()==1){
 //                onOffSwitch.setChecked(true);

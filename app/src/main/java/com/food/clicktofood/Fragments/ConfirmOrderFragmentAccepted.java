@@ -286,13 +286,13 @@ public class ConfirmOrderFragmentAccepted extends Fragment implements OnMapReady
             }
         });
 
-        if(jobResponse.getTask().getMTag()){
-            waiting.setVisibility(View.GONE);
-            accept.setVisibility(View.VISIBLE);
-        }else{
-            waiting.setVisibility(View.VISIBLE);
-            accept.setVisibility(View.GONE);
-        }
+//        if(jobResponse.getTask().getMTag()){
+//            waiting.setVisibility(View.GONE);
+//            accept.setVisibility(View.VISIBLE);
+//        }else{
+//            waiting.setVisibility(View.VISIBLE);
+//            accept.setVisibility(View.GONE);
+//        }
 
         mapView.onCreate(savedInstanceState);
         checkPermission();

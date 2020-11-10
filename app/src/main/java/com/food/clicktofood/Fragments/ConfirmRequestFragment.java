@@ -350,18 +350,21 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
 //                        .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
 //                        .commit();
 
-                if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                } else {
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                            .commit();
-                }
+//                if (getFragmentManager().findFragmentByTag("NewJobListFragmentTab") != null) {
+//                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                    getFragmentManager()
+//                            .beginTransaction()
+//                            .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                            .commit();
+//                } else {
+//                    getFragmentManager()
+//                            .beginTransaction()
+//                            .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                            .commit();
+//                }
+
+                getActivity().finish();
+                startActivity(new Intent(getActivity(), AfterLoginActivity.class));
             }
             //Toast.makeText(getActivity(), clientResponse.getMessage(), Toast.LENGTH_LONG).show();
         }else{
@@ -369,18 +372,20 @@ public class ConfirmRequestFragment extends Fragment implements OnMapReadyCallba
             ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    if (getFragmentManager().findFragmentByTag("JobListFragment") != null) {
-                        getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        getFragmentManager()
-                                .beginTransaction()
-                                .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                                .commit();
-                    } else {
-                        getFragmentManager()
-                                .beginTransaction()
-                                .add(R.id.fragmentHolder, new JobListFragment().newInstance(), "JobListFragment")
-                                .commit();
-                    }
+//                    if (getFragmentManager().findFragmentByTag("NewJobListFragmentTab") != null) {
+//                        getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        getFragmentManager()
+//                                .beginTransaction()
+//                                .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                                .commit();
+//                    } else {
+//                        getFragmentManager()
+//                                .beginTransaction()
+//                                .add(R.id.fragmentHolder, new NewJobListFragmentTab().newInstance(), "NewJobListFragmentTab")
+//                                .commit();
+//                    }
+                    getActivity().finish();
+                    startActivity(new Intent(getActivity(), AfterLoginActivity.class));
                 }
             });
 
