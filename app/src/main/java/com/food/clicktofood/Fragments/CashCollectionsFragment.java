@@ -120,6 +120,20 @@ public class CashCollectionsFragment extends Fragment {
         dateValue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                Calendar newCalendar = Calendar.getInstance();
+//                DatePickerDialog fromDatePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+//                    @Override
+//                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                        Calendar newDate = Calendar.getInstance();
+//                        newDate.set(year, monthOfYear, dayOfMonth);
+//                        dateValue.setText(dateFormat.format(newDate.getTime()));
+//                        Log.d(TAG, "Date separate "+year+monthOfYear+dayOfMonth);
+//                        getCashCollectionsList();
+//                    }
+//                }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH)
+//                );
+//                fromDatePicker.show();
+
                 Calendar newCalendar = Calendar.getInstance();
                 DatePickerDialog fromDatePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -134,7 +148,8 @@ public class CashCollectionsFragment extends Fragment {
                 fromDatePicker.show();
             }
         });
-        dateFormat = new SimpleDateFormat("YYYY-MM-dd", Locale.US);
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        //dateFormat = new SimpleDateFormat("dd/MMM/yyyy", Locale.US);
         dateValue.setText(dateFormat.format(cal.getTime()));
 
         recyclerView = myview.findViewById(R.id.rvJobList);
@@ -158,6 +173,7 @@ public class CashCollectionsFragment extends Fragment {
     public void getCashCollectionsList(){
         dialog = ProgressDialog.show(getActivity(), "", "Data retrieving. Please wait.....", true);
         if(isNetworkAvailable()){
+            Log.d(TAG, "Date error "+dateValue.getText().toString());
             //dialog = ProgressDialog.show(getApplicationContext(), "", "Signing in. Please wait.....", true);
             mCompositeDisposable.add(apiInterface.getCashCollection(sessionData.getUserDataModel().getData().getMember().get(0).getEmpID(), dateValue.getText().toString().trim()) //
                     .subscribeOn(Schedulers.io())
@@ -170,7 +186,7 @@ public class CashCollectionsFragment extends Fragment {
 
 
     private void handleResponsePromo(CashCollectionResponse clientResponse) {
-        Log.d(TAG, "All cashList response "+clientResponse);
+        //Log.d(TAG, "All cashList response "+clientResponse);
         dialog.dismiss();
         if(clientResponse.getIsSuccess()){
             error.setVisibility(View.GONE);

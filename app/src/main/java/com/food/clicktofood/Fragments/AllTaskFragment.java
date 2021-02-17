@@ -135,7 +135,7 @@ public class AllTaskFragment extends Fragment {
                 fromDatePicker.show();
             }
         });
-        dateFormat = new SimpleDateFormat("YYYY-MM-dd", Locale.US);
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         dateValue.setText(dateFormat.format(cal.getTime()));
 
         recyclerView = myview.findViewById(R.id.rvJobList);
