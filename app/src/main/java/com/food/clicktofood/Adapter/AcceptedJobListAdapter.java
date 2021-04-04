@@ -78,7 +78,7 @@ public class AcceptedJobListAdapter extends RecyclerView.Adapter<AcceptedJobList
             });
             holder.pickUp.setText(jobslist.get(position).getTask().getPickupLocation());
             holder.title.setText(jobslist.get(position).getTask().getCategoryname());
-            holder.drop.setText(jobslist.get(position).getTask().getCustomerAddress());
+            holder.drop.setText("Drop location - "+jobslist.get(position).getTask().getCustomerAddress());
             holder.pickUp.setText(jobslist.get(position).getTask().getPickupLocation());
     }
 }
