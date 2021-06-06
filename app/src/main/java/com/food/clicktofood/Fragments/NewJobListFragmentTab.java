@@ -1,8 +1,10 @@
 package com.food.clicktofood.Fragments;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.food.clicktofood.Adapter.JoblistPgAdapter;
 import com.food.clicktofood.R;
+import com.food.clicktofood.SessionData.SessionData;
 import com.google.android.material.tabs.TabLayout;
 
 /**
@@ -29,6 +32,8 @@ public class NewJobListFragmentTab extends Fragment {
     private String mParam2;
     TabLayout tabLayout;
     View myview;
+    SessionData sessionData;
+
     public NewJobListFragmentTab() {
         // Required empty public constructor
     }
@@ -74,7 +79,7 @@ public class NewJobListFragmentTab extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("Pending"));
         tabLayout.addTab(tabLayout.newTab().setText("Accepted"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
+        sessionData = new SessionData(getActivity());
         final ViewPager viewPager = (ViewPager)myview.findViewById(R.id.pager);
         final JoblistPgAdapter adapter = new JoblistPgAdapter(getFragmentManager(),tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
@@ -98,5 +103,25 @@ public class NewJobListFragmentTab extends Fragment {
         });
 
         return myview;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        sessionData.setAppState(true);
+    }
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+        sessionData.setAppState(false);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

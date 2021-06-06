@@ -202,7 +202,7 @@ public class AcceptedTaskFragment extends Fragment {
 
     private void handleErrorPromo(Throwable error) {
         dialog.dismiss();
-        Log.d(TAG, "Error "+error);
+        Log.d(TAG, "Error in accepted task "+error);
         Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
     }
 

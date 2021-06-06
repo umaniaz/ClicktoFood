@@ -19,7 +19,10 @@ public class ApiUtils {
 
 //    public static final String BASE_URL = "http://13.59.166.80:8089/api/Agents/";  // latest running test server given by arman bhai
 
-    public static final String BASE_URL = "http://18.222.191.88:8083/api/Agents/";  // latest production server given by arman bhai
+//    public static final String BASE_URL = "http://18.222.191.88:8083/api/Agents/";  // latest production server given by arman bhai
+    //public static final String BASE_URL = "https://api.aurkii.com/api/Agents/";  // latest production server given by shimul bhai, aurki server
+
+    public static final String BASE_URL = "http://3.21.32.66/clicktofoodapi/api/Agents/";  // latest production server given by shawn bhai, aurki server
 
 
 

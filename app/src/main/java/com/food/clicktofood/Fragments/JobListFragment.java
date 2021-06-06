@@ -167,6 +167,7 @@ public class JobListFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if(sessionData.getAppState()) {
                 String message = intent.getStringExtra("message");
+                Log.d(TAG, "Broadcast "+message+" Inside ");
                 Toast.makeText(getActivity(), "Task list reloaded", Toast.LENGTH_LONG).show();
                 getJobList();
             }else{
@@ -225,7 +226,7 @@ public class JobListFragment extends Fragment {
 
     private void handleErrorPromo(Throwable error) {
         dialog.dismiss();
-        Log.d(TAG, "Error "+error);
+        Log.d(TAG, "Error in joblist "+error);
         Toast.makeText(getActivity(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
     }
 

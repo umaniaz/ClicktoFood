@@ -347,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleErrorPromo(Throwable error) {
         dialog.dismiss();
-        Log.d(TAG, "Error "+error);
+        Log.d(TAG, "Error in login"+error);
 //        startActivity(new Intent(getApplicationContext(), MainActivity.class));
 //        //  finish();
         //Toast.makeText(getApplicationContext(), "Something went wrong, please try again", Toast.LENGTH_SHORT).show();
